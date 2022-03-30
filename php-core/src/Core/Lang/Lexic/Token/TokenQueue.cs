@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.src.Core.Lang.Lexic.Token
+namespace PHP.Core.Lang.Lexic.Token
 {
     public static class TokenQueue
     {
@@ -25,7 +25,7 @@ namespace PHP.src.Core.Lang.Lexic.Token
             TokenType.T_GOTO,                       //  goto
             TokenType.T_NAMESPACE,                  //  namespace
             TokenType.T_USE,                        //  use
-            TokenType.T_NAME_FULLY_QUALIFIED,       //  \App\Namespace
+            TokenType.T_NAMESPACE_SEPARATOR,        //  \
             TokenType.T_CONST,                      //  const
             TokenType.T_ECHO,                       //  echo
             TokenType.T_MATCH,                      //  match

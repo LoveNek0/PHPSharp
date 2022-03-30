@@ -188,7 +188,7 @@ namespace PHP.Core.Lang.Lexic.Token
             //  Namespaces
             {TokenType.T_NAMESPACE,                 @"namespace" },                                 //  namespace
             {TokenType.T_USE,                       @"use" },                                       //  use
-            {TokenType.T_NAME_FULLY_QUALIFIED,      @"(\\[a-zA-Z_][a-zA-Z0-9_]*)+" },               //  \App\Namespace
+            {TokenType.T_NAMESPACE_SEPARATOR,       @"\\" },                                        //  \
 
             //  Goto points
             {TokenType.T_GOTO,                      @"goto" },                                      //  goto

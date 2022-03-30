@@ -14,6 +14,7 @@ namespace PHP.Tests
         {
             string code = @"
 Hello, <?php
+namespace \LexerTest\1
 class Say{
     private static $word = 'world';
     public function GetWord() : string{

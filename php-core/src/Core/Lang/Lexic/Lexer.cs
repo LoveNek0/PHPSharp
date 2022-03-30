@@ -1,6 +1,6 @@
 ﻿using PHP.Core.Exceptions;
 using PHP.Core.Lang.Lexic.Token;
-using PHP.src.Core.Lang.Lexic.Token;
+using PHP.Core.Lang.Lexic.Token;
 using System;
 using System.Collections.Generic;
 using System.Linq;
