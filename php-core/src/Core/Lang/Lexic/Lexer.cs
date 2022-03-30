@@ -1,5 +1,6 @@
 ﻿using PHP.Core.Exceptions;
 using PHP.Core.Lang.Lexic.Token;
+using PHP.src.Core.Lang.Lexic.Token;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace PHP.Core.Lang.Lexic
             return column;
         }
 
-        private TokenItem ParseNext(bool clean = true)
+        private TokenItem ParseNext()
         {
             string currentCode = code.Substring(position);
             if (!isCode)
@@ -66,17 +67,11 @@ namespace PHP.Core.Lang.Lexic
             else
             {
                 TokenItem result = null;
-                foreach (TokenType type in TokenPatterns.GetTypes())
+                foreach (TokenType type in TokenQueue.GetQueue())
                 {
                     Match match = type.GetPatternRegex().Match(currentCode);
                     if (match.Success)
                     {
-                        if (type == TokenType.T_WHITESPACE || type == TokenType.T_COMMENT || type == TokenType.T_DOC_COMMENT)
-                        {
-                            position += match.Value.Length;
-                            inlineHtmlStart = position;
-                            return ParseNext(clean);
-                        }
                         if (type == TokenType.T_CLOSE_TAG)
                             isCode = false;
                         result = new TokenItem(type, match.Value, position, GetLineAt(position), GetColumnAt(position));
@@ -86,7 +81,7 @@ namespace PHP.Core.Lang.Lexic
                     }
                 }
                 if (result == null)
-                    throw new LexicalException("Unable to recognize '" + currentCode[0] + "'", position, GetLineAt(position), GetColumnAt(position));
+                    throw new LexicalException("Unable to recognize '" + (int)currentCode[0] + "'", position, GetLineAt(position), GetColumnAt(position));
                 return result;
             }
         }
@@ -103,7 +98,12 @@ namespace PHP.Core.Lang.Lexic
             Clean();
             List<TokenItem> list = new List<TokenItem>();
             while(position < code.Length)
-                list.Add(ParseNext(clean));
+                list.Add(ParseNext());
+            if (clean)
+                list.RemoveAll(delegate (TokenItem item)
+                {
+                    return item.type is TokenType.T_COMMENT or TokenType.T_DOC_COMMENT or TokenType.T_WHITESPACE;
+                });
             return list.ToArray();
         }
     }

@@ -8,169 +8,225 @@ namespace PHP.Core.Lang.Lexic.Token
 {
     public enum TokenType
     {
-        //  Arithmetic operators
+        //  Arithmetic Operator
         T_ADD,                      //  +
         T_SUB,                      //  -
         T_MUL,                      //  *
         T_DIV,                      //  /
         T_MOD,                      //  %
-        T_POW,                      // **
+        T_POW,                      //  **
 
-        //  Assignment operators
+        //  Bitwise Operator
+        T_BIT_AND,                  //  &
+        T_BIT_XOR,                  //  ^
+        T_BIT_NOT,                  //  |
+        T_BIT_SHIFT_LEFT,           //  <<
+        T_BIT_SHIFT_RIGHT,          //  >>
+
+        //  String operator
+        T_CONCAT,                   //  .
+
+        //  Assignment Operator
         T_EQUAL,                    //  =
 
-        T_ABSTRACT,                 //  abstract
-        T_ARRAY,                    //  array
-        T_ARRAY_BRACE_OPEN,         //  [
-        T_ARRAY_BRACE_CLOSE,        //  ]
-
-        T_AND_EQUAL,                //  &=
-        T_ARRAY_CAST,               //  (array)
-        T_AS,                       //  as
-        T_ATTRIBUTE,                //  attribytes
-        T_BAD_CHARACTER,            //  0x00-0x1F without \t (0x09), \n (0x0a) и \r (0x0d)
-        T_BOOLEAN_AND,              //  &&
-        T_BOOLEAN_OR,               //  ||
-        T_BOOL_CAST,                //  (bool) (boolean)
-        T_BREAK,                    //  break
-        T_CALLABLE,                 //  callable
-        T_CASE,                     //  case
-        T_CATCH,                    //  catch
-        T_CLASS,                    //  class
-        T_CLASS_C,                  //  __CLASS__
-        T_CLONE,                    //  clone
-        T_CLOSE_TAG,                //  ?> %>
-        T_COALESCE_EQUAL,           //  ??=
+        //  Null Coalescing Operator
         T_COALESCE,                 //  ??
-        T_COMMENT,                  //  // # /**/
-        T_CONCAT_EQUAL,             //  .=
-        T_CONST,                    //  const
-        T_CONSTANT_ENCAPSED_STRING, //  "" ''
-        T_CONTINUE,                 //  continue
-        T_CURLY_OPEN,               //  {$
-        T_DEC,                      //  --
-        T_DECLARE,                  //  declare
-        T_DEFAULT,                  //  default
-        T_DIR,                      //  __DIR__
+
+        //  Assignment with Arithmetic Operator
+        T_PLUS_EQUAL,               //  +=
+        T_MINUS_EQUAL,              //  -=
+        T_MUL_EQUAL,                //  *=
         T_DIV_EQUAL,                //  /=
-        T_DNUMBER,                  //  0.123
-        T_DO,                       //  do
-        T_DOC_COMMENT,              //  /** */
-        T_DOLLAR_OPEN_CURLY_BRACES, //  ${
-        T_DOUBLE_ARROW,             //  =>
-        T_DOUBLE_CAST,              //  (real) (double) (float)
-        T_DOUBLE_COLON,             //  ::
-        T_ECHO,                     //  echo
-        T_ELLIPSIS,                 //  ...
-        T_ELSE,                     //  else
-        T_ELSEIF,                   //  elseif
-        T_EMPTY,                    //  empty()
-        T_ENCAPSED_AND_WHITESPACE,  //  "$var"
-        T_ENDDECLARE,               //  enddeclare
-        T_ENDFOR,                   //  endfor
-        T_ENDFOREACH,               //  endforeach
-        T_ENDIF,                    //  endif
-        T_ENDSWITCH,                //  endswitch
-        T_ENDWHILE,                 //  endwhile
-        T_END_HEREDOC,              //  END
-        T_EVAL,                     //  eval()
-        T_EXIT,                     //  exit() die()
-        T_EXTENDS,                  //  extends
-        T_FILE,                     //  __FILE__
-        T_FINAL,                    //  final
-        T_FINALLY,                  //  finally
-        T_FN,                       //  fn
-        T_FOR,                      //  for
-        T_FOREACH,                  //  foreach
-        T_FUNCTION,                 //  function
-        T_FUNC_C,                   //  __FUNCTION__
-        T_GLOBAL,                   //  global
-        T_GOTO,                     //  goto
-        T_HALT_COMPILER,            //  __halt_compiler()
-        T_IF,                       //  if
-        T_IMPLEMENTS,               //  implements
-        T_INC,                      //  ++
-        T_INCLUDE,                  //  include
-        T_INCLUDE_ONCE,             //  include_once
-        T_INLINE_HTML,              //  any text outside php code tags
-        T_INSTANCEOF,               //  instanceof
-        T_INSTEADOF,                //  insteadof
-        T_INTERFACE,                //  interface
-        T_INT_CAST,                 //  (int) (integer)
-        T_ISSET,                    //  isset()
+        T_MOD_EQUAL,                //  %=
+        T_POW_EQUAL,                //  **=
+
+        //  Assignment with Bitwise Operator
+        T_BIT_AND_EQUAL,            //  &=
+        T_BIT_XOR_EQUAL,            //  ^=
+        T_BIT_NOT_EQUAL,            //  |=
+        T_BIT_SHIFT_LEFT_EQUAL,     //  <<=
+        T_BIT_SHIFT_RIGHT_EQUAL,    //  >>=
+
+        //  Assignment with String Operator
+        T_CONCAT_EQUAL,             //  .=
+
+        //  Assignment with Null Coalescing Operator
+        T_COALESCE_EQUAL,           //  ??=
+
+        //  Logical Operator
+        T_LOGICAL_AND,              //  && and
+        T_LOGICAL_OR,               //  || or
+        T_LOGICAL_XOR,              //  xor
+
+        //  Comparison Operator
         T_IS_EQUAL,                 //  ==
-        T_IS_GREATER_OR_EQUAL,      //  >=
         T_IS_IDENTICAL,             //  ===
         T_IS_NOT_EQUAL,             //  != <>
         T_IS_NOT_IDENTICAL,         //  !==
+        T_IS_GREATER,               // >
+        T_IS_SMALLER,               // <
+        T_IS_GREATER_OR_EQUAL,      //  >=
         T_IS_SMALLER_OR_EQUAL,      //  <=
-        T_LINE,                     //  __LINE__
-        T_LIST,                     //  list()
-        T_LNUMBER,                  //  123 012 0x1ac
-        T_LOGICAL_AND,              //  and
-        T_LOGICAL_OR,               //  or
-        T_LOGICAL_XOR,              //  xor
-        T_MATCH,                    //  match
-        T_METHOD_C,                 //  __METHOD__
-        T_MINUS_EQUAL,              //  -=
-        T_MOD_EQUAL,                //  %=
-        T_MUL_EQUAL,                //  *=
-        T_NAMESPACE,                //  namespace
-        T_NAME_FULLY_QUALIFIED,     //  \App\Namespace
-        T_NEW,                      //  new
-        T_NS_C,                     //  __NAMESPACE__
-        T_NS_SEPARATOR,             //  \
-        T_NUM_STRING,               //  "$var[0]"
-        T_OBJECT_CAST,              //  (object)
-        T_OBJECT_OPERATOR,          //  ->
-        T_NULLSAFE_OBJECT_OPERATOR, //  ?->
-        T_OPEN_TAG,                 //  <?php <? <%
-        T_OPEN_TAG_WITH_ECHO,       //  <?= <%=
-        T_OR_EQUAL,                 //  |=
-        T_PAAMAYIM_NEKUDOTAYIM,     //  ::
-        T_PLUS_EQUAL,               //  +=
-        T_POW_EQUAL,                //  **=
-        T_PRINT,                    //  print()
-        T_PRIVATE,                  //  private
-        T_PROTECTED,                //  protected
-        T_PUBLIC,                   //  public
-        T_REQUIRE,                  //  require
-        T_REQUIRE_ONCE,             //  require_once
-        T_RETURN,                   //  return
-        T_SL,                       //  <<
-        T_SL_EQUAL,                 //  <<=
         T_SPACESHIP,                //  <=>
-        T_SR,                       //  >>
-        T_SR_EQUAL,                 //  >>=
-        T_START_HEREDOC,            //  <<<
-        T_STATIC,                   //  static
+
+        //  Incrementing/Decrementing Operator
+        T_DEC,                      //  --
+        T_INC,                      //  ++
+
+        //  Data
+        T_LNUMBER,                  //  123 012 0x1ac
+        T_DNUMBER,                  //  1.5
+        T_CONSTANT_ENCAPSED_STRING, //  "" ''
         T_STRING,                   //  parent self T_CONSTANT_ENCAPSED_STRING
-        T_STRING_CAST,              //  (string)
-        T_STRING_VARNAME,           //  "${a
-        T_SWITCH,                   //  switch
-        T_THROW,                    //  throw
-        T_TRAIT,                    //  trait
-        T_TRAIT_C,                  //  __TRAIT__
-        T_TRY,                      //  try
-        T_UNSET,                    //  unset()
-        T_UNSET_CAST,               //  (unset)
-        T_USE,                      //  use
-        T_VAR,                      //  var
-        T_VARIABLE,                 //  $var
-        T_WHILE,                    //  while
-        T_WHITESPACE,               //  \t \r \n
-        T_XOR_EQUAL,                //  ^=
+
+        //  Variable
+        T_VARIABLE,                 //  $var_1
+        T_DOLLAR_OPEN_CURLY_BRACES, //  ${
+
+        //  Function
+        T_FUNCTION,                 //  function
+        T_STATIC,                   //  static
+        T_RETURN,                   //  return
         T_YIELD,                    //  yield
         T_YIELD_FROM,               //  yield_from
+        T_CALLABLE,                 //  callable
+        T_ELLIPSIS,                 //  ...
+        T_FN,                       //  fn
 
-        T_SEMICOLON,                //  ;
-        T_CURLY_BRACE_OPEN,         //  {
-        T_CURLY_BRACE_CLOSE,        //  }
+        //  Class
+        T_ABSTRACT,                 //  abstract
+        T_INTERFACE,                //  interface
+        T_TRAIT,                    //  trait
+        T_CLASS,                    //  class
+        T_PUBLIC,                   //  public
+        T_PRIVATE,                  //  private
+        T_PROTECTED,                //  protected
+        T_DOUBLE_COLON,             //  ::
+        T_OBJECT_OPERATOR,          //  ->
+        T_NULLSAFE_OBJECT_OPERATOR, //  ?->
+        T_CLONE,                    //  clone
+        T_EXTENDS,                  //  extends
+        T_IMPLEMENTS,               //  implements
+        T_FINAL,                    //  final
+        T_INSTANCEOF,               //  instanceof
+        T_INSTEADOF,                //  insteadof
+        T_NEW,                      //  new
+        //  T_ATTRIBUTE,                                //  attribytes
+
+        //  Array
+        T_ARRAY,                    //  array()
+        T_DOUBLE_ARROW,             //  =>
+
+        //  Casting
+        T_INT_CAST,                 //  (int) (integer)
+        T_DOUBLE_CAST,              //  (real) (double) (float)
+        T_STRING_CAST,              //  (string)
+        T_BOOL_CAST,                //  (bool) (boolean)
+        T_ARRAY_CAST,               //  (array)
+        T_OBJECT_CAST,              //  (object)
+        T_UNSET_CAST,               //  (unset)
+
+        //  Cycles
+        T_DO,                       //  do
+        T_WHILE,                    //  while
+        T_ENDWHILE,                 //  endwhile
+        T_FOR,                      //  for
+        T_ENDFOR,                   //  endfor
+        T_FOREACH,                  //  foreach
+        T_ENDFOREACH,               //  endforeach
+        T_AS,                       //  as
+        T_CONTINUE,                 //  continue
+
+        //  Switch
+        T_SWITCH,                   //  switch
+        T_ENDSWITCH,                //  endswitch
+        T_CASE,                     //  case
+        T_BREAK,                    //  break
+        T_DEFAULT,                  //  default
+
+        //  if ... else
+        T_IF,                       //  if
+        T_ELSE,                     //  else
+        T_ELSEIF,                   //  elseif
+        T_ENDIF,                    //  endif
+
+        //  try .. catch
+        T_THROW,                    //  throw
+        T_TRY,                      //  try
+        T_CATCH,                    //  catch
+        T_FINALLY,                  //  finally
+
+        //  Magic Constants
+        T_FILE,                     //  __FILE__
+        T_FUNC_C,                   //  __FUNCTION__
+        T_CLASS_C,                  //  __CLASS__
+        T_DIR,                      //  __DIR__
+        T_TRAIT_C,                  //  __TRAIT__
+        T_LINE,                     //  __LINE__
+        T_METHOD_C,                 //  __METHOD__
+        T_NS_C,                     //  __NAMESPACE__
+
+        //  Braces
         T_BRACE_OPEN,               //  (
         T_BRACE_CLOSE,              //  )
-        
+        T_CURLY_BRACE_OPEN,         //  {  
+        T_CURLY_BRACE_CLOSE,        //  }
+        T_SQUARE_BRACE_OPEN,        //  [
+        T_SQUARE_BRACE_CLOSE,       //  ]
 
+        //  Language Constructions
+        T_CONST,                    //  const
+        T_ECHO,                     //  echo
+        T_MATCH,                    //  match
+        T_GLOBAL,                   //  global
+        T_DECLARE,                  //  declare
+        T_ENDDECLARE,               //  enddeclare
+
+        //  Namespaces
+        T_NAMESPACE,                //  namespace
+        T_USE,                      //  use
+        T_NAME_FULLY_QUALIFIED,     //  \App\Namespace
+
+        //  Goto points
+        T_GOTO,                     //  goto
+        T_COLON,                    //  :
+
+        //  Including Operators
+        T_INCLUDE,                  //  include
+        T_INCLUDE_ONCE,             //  include_once
+        T_REQUIRE,                  //  require
+        T_REQUIRE_ONCE,             //  require_once
+
+        //  Unused Tokens
+        T_DOC_COMMENT,              // /** */
+        T_COMMENT,                  // // # /* */
+        T_WHITESPACE,               //  \t \r \n
+
+        //  Basic Functions
+        //  T_UNSET,                    //  unset()
+        //  T_EMPTY,                    //  empty()
+        //  T_EVAL,                     //  eval()
+        //  T_EXIT,                     //  exit() die()
+        //  T_HALT_COMPILER,            //  __halt_compiler()
+        //  T_ISSET,                    //  isset()
+        //  T_LIST,                     //  list()
+        //  T_PRINT,                    //  print()
+
+        //  PHP Code Limiters
+        T_OPEN_TAG,                 //  <? <?php <%
+        T_OPEN_TAG_WITH_ECHO,       //  <?= <%=
+        T_CLOSE_TAG,                //  ?> %>
+        T_INLINE_HTML,              //  any text outside php code tags
+
+        //  Separators
         T_COMMA,                    //  ,
-        T_DOT                       //  .
+        T_SEMICOLON,                //  ;
+
+        //  Heredoc
+        T_START_HEREDOC,            //  <<<
+        T_END_HEREDOC,              //  END
+
+        //  Incorrect symbols
+        //  T_BAD_CHARACTER, \n (0x0a) и \r (0x0d)
     }
 }
