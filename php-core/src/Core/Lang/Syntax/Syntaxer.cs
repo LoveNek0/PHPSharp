@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PHP.Core.Lang.Syntax.AST.Basic;
 
 namespace PHP.Core.Lang.Syntax
 {
@@ -14,6 +15,8 @@ namespace PHP.Core.Lang.Syntax
     {
         private TokenItem[] tokens;
         private int current = 0;
+        private TokenItem currentNamespace = null;
+
 
         public Syntaxer(TokenItem[] tokens) => this.tokens = tokens;
 
@@ -35,9 +38,84 @@ namespace PHP.Core.Lang.Syntax
             throw new SyntaxException(message, tokens[current].position, tokens[current].line, tokens[current].column);
         }
 
-        private ASTNode ParseNext()
+        private ASTNode ParseNext(ref bool endOfLine, ASTNode prev = null, params TokenType[] expected)
         {
-            return new ASTListNode();
+            if (current >= tokens.Length)
+                endOfLine = true;
+            if (endOfLine)
+                return prev;
+            TokenItem next = NextItem(expected);
+            switch (next.type)
+            {
+                case TokenType.T_NAMESPACE:
+                    {
+                        TokenItem nextNS = NextItem();
+                        if (nextNS.type is TokenType.T_NAMESPACE_NAME or TokenType.T_STRING)
+                            this.currentNamespace = nextNS;
+                        else
+                            this.currentNamespace = null;
+                        return ParseNext(ref endOfLine);
+                    }
+                case TokenType.T_ECHO:
+                    {
+                        ASTUnaryNode node = new ASTUnaryNode(next);
+                        node.operand = ParseNext(ref endOfLine, node);
+                        return ParseNext(ref endOfLine, node);
+                    }
+                case TokenType.T_INLINE_HTML:
+                    {
+                        ASTNode node = new ASTContainerNode(next);
+                        node.parent = prev;
+                        if (prev == null)
+                            return node;
+                        return ParseNext(ref endOfLine, node);
+                    }
+                case TokenType.T_VARIABLE:
+                case TokenType.T_DNUMBER:
+                case TokenType.T_LNUMBER:
+                    {
+                        ASTNode node = new ASTContainerNode(next);
+                        node.parent = prev;
+                        return ParseNext(ref endOfLine, node);
+                    }
+                case TokenType.T_EQUAL:
+                case TokenType.T_MUL:
+                case TokenType.T_DIV:
+                case TokenType.T_MOD:
+                case TokenType.T_POW:
+                    {
+                        ASTBinaryNode node = new ASTBinaryNode(next, prev);
+                        node.right = ParseNext(ref endOfLine, node);
+                        node.left.parent = node;
+                        node.right.parent = node;
+                        return node;
+                    }
+                case TokenType.T_ADD:
+                case TokenType.T_SUB:
+                    {
+                        
+                        if (prev != null && prev.parent != null)
+                            if (prev.parent.GetType() == typeof(ASTBinaryNode))
+                                if (((ASTBinaryNode)prev.parent).token.type is TokenType.T_MUL or TokenType.T_DIV or TokenType.T_MOD or TokenType.T_POW)
+                                {
+                                    current--;
+                                    return prev;
+                                }
+                        ASTBinaryNode node = new ASTBinaryNode(next, prev);
+                        node.right = ParseNext(ref endOfLine, node);
+                        node.left.parent = node;
+                        node.right.parent = node;
+                        return ParseNext(ref endOfLine, node);
+                    }
+                case TokenType.T_BRACE_OPEN:
+                    return ParseNext(ref endOfLine);
+                case TokenType.T_SEMICOLON:
+                    endOfLine = true;
+                    return prev;
+                case TokenType.T_BRACE_CLOSE:
+                    return prev;
+            }
+            return null;
         }
 
         public ASTListNode Parse()
@@ -45,13 +123,10 @@ namespace PHP.Core.Lang.Syntax
             ASTListNode result = new ASTListNode();
             while (current < tokens.Length)
             {
-                TokenItem next = NextItem();
-                switch (next.type)
-                {
-                    case TokenType.T_LNUMBER:
-
-                        break;
-                }
+                bool e = false;
+                ASTNode node = ParseNext(ref e);
+                if(node != null)
+                    result.AddNode(node);
             }
             return result;
         }

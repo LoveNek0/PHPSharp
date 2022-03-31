@@ -25,7 +25,8 @@ namespace PHP.Core.Lang.Lexic.Token
             TokenType.T_GOTO,                       //  goto
             TokenType.T_NAMESPACE,                  //  namespace
             TokenType.T_USE,                        //  use
-            TokenType.T_NAMESPACE_SEPARATOR,        //  \
+            TokenType.T_NAMESPACE_NAME,             //  a\b\c
+            TokenType.T_NAMESPACE_CALL_NAME,        //  \a\b\c
             TokenType.T_CONST,                      //  const
             TokenType.T_ECHO,                       //  echo
             TokenType.T_MATCH,                      //  match

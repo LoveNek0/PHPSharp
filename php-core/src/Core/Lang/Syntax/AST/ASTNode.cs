@@ -8,6 +8,6 @@ namespace PHP.Core.Lang.Syntax.AST
 {
     public abstract class ASTNode
     {
-
+        public ASTNode parent = null;
     }
 }

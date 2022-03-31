@@ -184,8 +184,9 @@ namespace PHP.Core.Lang.Lexic.Token
 
         //  Namespaces
         T_NAMESPACE,                //  namespace
+        T_NAMESPACE_NAME,           //  a\b\c
         T_USE,                      //  use
-        T_NAMESPACE_SEPARATOR,     //  \
+        T_NAMESPACE_CALL_NAME,      //  \a\b\c
 
         //  Goto points
         T_GOTO,                     //  goto

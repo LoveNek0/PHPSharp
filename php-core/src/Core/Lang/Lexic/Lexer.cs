@@ -100,10 +100,17 @@ namespace PHP.Core.Lang.Lexic
             while(position < code.Length)
                 list.Add(ParseNext());
             if (clean)
+            {
                 list.RemoveAll(delegate (TokenItem item)
                 {
-                    return item.type is TokenType.T_COMMENT or TokenType.T_DOC_COMMENT or TokenType.T_WHITESPACE;
+                    return item.type is TokenType.T_COMMENT or TokenType.T_DOC_COMMENT or TokenType.T_WHITESPACE
+                                    or TokenType.T_OPEN_TAG or TokenType.T_CLOSE_TAG;
                 });
+                list.RemoveAll(delegate (TokenItem item)
+                {
+                    return item.data.Length == 0;
+                });
+            }
             return list.ToArray();
         }
     }
