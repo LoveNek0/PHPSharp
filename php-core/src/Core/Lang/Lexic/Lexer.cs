@@ -1,6 +1,5 @@
 ﻿using PHP.Core.Exceptions;
 using PHP.Core.Lang.Lexic.Token;
-using PHP.Core.Lang.Lexic.Token;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -103,8 +102,8 @@ namespace PHP.Core.Lang.Lexic
             {
                 list.RemoveAll(delegate (TokenItem item)
                 {
-                    return item.type is TokenType.T_COMMENT or TokenType.T_DOC_COMMENT or TokenType.T_WHITESPACE
-                                    or TokenType.T_OPEN_TAG or TokenType.T_CLOSE_TAG;
+                    return item.type == TokenType.T_COMMENT || item.type == TokenType.T_DOC_COMMENT || item.type == TokenType.T_WHITESPACE
+                                    || item.type == TokenType.T_OPEN_TAG || item.type == TokenType.T_CLOSE_TAG;
                 });
                 list.RemoveAll(delegate (TokenItem item)
                 {

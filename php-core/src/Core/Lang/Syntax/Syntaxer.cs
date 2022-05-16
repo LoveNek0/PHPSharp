@@ -50,7 +50,7 @@ namespace PHP.Core.Lang.Syntax
                 case TokenType.T_NAMESPACE:
                     {
                         TokenItem nextNS = NextItem();
-                        if (nextNS.type is TokenType.T_NAMESPACE_NAME or TokenType.T_STRING)
+                        if (nextNS.type == TokenType.T_NAMESPACE_NAME || nextNS.type == TokenType.T_STRING)
                             this.currentNamespace = nextNS;
                         else
                             this.currentNamespace = null;
@@ -96,7 +96,7 @@ namespace PHP.Core.Lang.Syntax
                         
                         if (prev != null && prev.parent != null)
                             if (prev.parent.GetType() == typeof(ASTBinaryNode))
-                                if (((ASTBinaryNode)prev.parent).token.type is TokenType.T_MUL or TokenType.T_DIV or TokenType.T_MOD or TokenType.T_POW)
+                                if (((ASTBinaryNode)prev.parent).token.type == TokenType.T_MUL || ((ASTBinaryNode)prev.parent).token.type == TokenType.T_DIV || ((ASTBinaryNode)prev.parent).token.type == TokenType.T_MOD || ((ASTBinaryNode)prev.parent).token.type == TokenType.T_POW)
                                 {
                                     current--;
                                     return prev;
