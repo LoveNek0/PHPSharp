@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace PHP.Core.Lang.Lexic.Token
+namespace PHP.Core.Lang.Token
 {
     public static class TokenPatterns
     {
         private static readonly Dictionary<TokenType, string> patterns = new Dictionary<TokenType, string>()
-        {
+            {
             //  Arithmetic Operator
-            {TokenType.T_ADD,                       @"\+" },                                         //  +
+            {TokenType.T_ADD,                       @"\+" },                                        //  +
             {TokenType.T_SUB,                       @"-" },                                         //  -
             {TokenType.T_MUL,                       @"\*" },                                         //  *
             {TokenType.T_DIV,                       @"/" },                                         //  /
@@ -205,7 +204,7 @@ namespace PHP.Core.Lang.Lexic.Token
             //  Unused Tokens
             {TokenType.T_DOC_COMMENT,               @"\/\*\*[\s\S]*\*\/"},                          // /** */
             {TokenType.T_COMMENT,                   @"(((\/\/)|#).*)|(\/\*[\s\S]*\*\/)"},           // // # /* */
-            {TokenType.T_WHITESPACE,                @"[\n\t\r\s][\n\t\r\s]*"},                      //  \t \r \n
+            {TokenType.T_WHITESPACE,                @"[\s]+"},                      //  \t \r \n
 
             //  Basic Functions
             //  {TokenType.T_UNSET, "TODO"},                    //  unset()
@@ -229,11 +228,11 @@ namespace PHP.Core.Lang.Lexic.Token
 
             //  Heredoc
             {TokenType.T_START_HEREDOC,                 @"<<<" },                                   //  <<<
-            {TokenType.T_END_HEREDOC,                   @"END" },                                   //  END
+            {TokenType.T_END_HEREDOC,                   @"END" }                                    //  END
 
             //  Incorrect symbols
             //  {TokenType.T_BAD_CHARACTER,             @""},            //  0x00-0x1F without \t (0x09), "TODO"}, \n (0x0a) и \r (0x0d)
-        };
+			};
 
         public static Regex GetPatternRegex(this TokenType type)
         {

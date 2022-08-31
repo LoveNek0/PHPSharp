@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Lang.Lexic.Token
+namespace PHP.Core.Lang.Token
 {
     public enum TokenType
     {

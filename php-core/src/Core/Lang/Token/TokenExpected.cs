@@ -4,40 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Lang.Lexic.Token
+namespace PHP.Core.Lang.Token
 {
     public static class TokenExpected
     {
         private static readonly Dictionary<TokenType, TokenType[]> expectations = new Dictionary<TokenType, TokenType[]>()
         {
-
-            {TokenType.T_INLINE_HTML, new TokenType[]{
-                TokenType.T_OPEN_TAG
-            }},
-            {TokenType.T_OPEN_TAG, new TokenType[]{
-                TokenType.T_CLOSE_TAG,
-                TokenType.T_NAMESPACE, TokenType.T_VARIABLE,
-                TokenType.T_CLASS, TokenType.T_FUNCTION,
-                TokenType.T_DNUMBER, TokenType.T_LNUMBER,
-                TokenType.T_CURLY_BRACE_OPEN, TokenType.T_ABSTRACT
-            }},
-            {TokenType.T_CLOSE_TAG, new TokenType[]{
-                TokenType.T_INLINE_HTML, TokenType.T_OPEN_TAG
-            }},
-            {TokenType.T_ABSTRACT, new TokenType[]{
-                TokenType.T_CLASS
-            }},
-            {TokenType.T_CLASS, new TokenType[]{
-                TokenType.T_CLASS_C, TokenType.T_STRING
-            }},
-            {TokenType.T_STRING, new TokenType[]{
-                TokenType.T_CURLY_BRACE_OPEN
-            }},
-            {TokenType.T_CURLY_BRACE_OPEN, new TokenType[]{
-                TokenType.T_CURLY_BRACE_CLOSE
-
-            }}
-
 
 
         };
