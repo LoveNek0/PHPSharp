@@ -27,7 +27,7 @@ namespace PHP.Core.Lang.Token
         T_CONCAT,                   //  .
 
         //  Assignment Operator
-        T_EQUAL,                    //  =
+        T_ASSIGNMENT,                    //  =
 
         //  Null Coalescing Operator
         T_COALESCE,                 //  ??

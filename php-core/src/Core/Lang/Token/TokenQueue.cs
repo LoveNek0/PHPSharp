@@ -64,7 +64,7 @@ namespace PHP.Core.Lang.Token
         TokenType.T_BIT_XOR,                  //  ^
         TokenType.T_BIT_NOT,                  //  |
         TokenType.T_CONCAT,                   //  .
-        TokenType.T_EQUAL,                    //  =
+        TokenType.T_ASSIGNMENT,                    //  =
         TokenType.T_IS_GREATER,               // >
         TokenType.T_IS_SMALLER,               // <
         TokenType.T_LNUMBER,                  //  123 012 0x1ac

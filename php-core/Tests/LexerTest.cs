@@ -1,4 +1,5 @@
 ﻿using PHP.Core.Lang;
+using PHP.Core.Lang.AST;
 using PHP.Core.Lang.Token;
 using System;
 using System.Collections.Generic;
@@ -12,24 +13,17 @@ namespace PHP.Tests
     {
                 public static void Main(string[] args)
         {
-            string code = @"Hello<?php
-$a = 800 - 200 * 350 + 5;
-echo $a;
-$b = 5 + (100 - 1 * $a) % 10 - 1001;
-echo(($a+$b)-10);?>
-1
-2
-3
-4
-5
-<?php ?>
+            string code = @"<?php
+$a = 1 - 2 + 3;
 ";
             Tokenizer lexer = new Tokenizer(code);
             TokenItem[] list = lexer.GetTokens();
             foreach (TokenItem item in list)
                 Console.WriteLine(item.ToString());
             Console.WriteLine();
-
+            ASTBuilder builder = new ASTBuilder(list);
+            ASTFile file = builder.Build();
+            Console.WriteLine(file.ToString());
             Console.ReadKey();
         }
     }

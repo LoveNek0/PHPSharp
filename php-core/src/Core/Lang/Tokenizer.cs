@@ -69,7 +69,7 @@ namespace PHP.Core.Lang
                     return token;
                 }
             }
-            throw new LexicalException("Unknown token \"" + code[position] + "\" at line " + this.line + ", column " + this.column, this.position, this.line, this.column);
+            throw new LexicalException("Unknown token \"" + code[position] + "\"", this.position, this.line, this.column);
         }
 
         public TokenItem[] GetTokens()

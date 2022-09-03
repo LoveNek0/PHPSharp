@@ -10,8 +10,42 @@ namespace PHP.Core.Lang.Token
     {
         private static readonly Dictionary<TokenType, TokenType[]> expectations = new Dictionary<TokenType, TokenType[]>()
         {
-
-
+            {TokenType.T_INLINE_HTML,  new TokenType[]{
+                TokenType.T_INLINE_HTML,
+                TokenType.T_VARIABLE,
+                TokenType.T_ECHO,
+                TokenType.T_SEMICOLON
+            } },
+            {TokenType.T_SEMICOLON, new TokenType[]{
+                TokenType.T_SEMICOLON,
+                TokenType.T_INLINE_HTML,
+                TokenType.T_VARIABLE,
+                TokenType.T_ECHO
+            } },
+            {TokenType.T_VARIABLE, new TokenType[]{
+                TokenType.T_ASSIGNMENT,
+                TokenType.T_ADD,
+                TokenType.T_SUB,
+                TokenType.T_SEMICOLON
+            }},
+            {TokenType.T_LNUMBER, new TokenType[]{
+                TokenType.T_ASSIGNMENT,
+                TokenType.T_ADD,
+                TokenType.T_SUB,
+                TokenType.T_SEMICOLON
+            }},
+            {TokenType.T_ASSIGNMENT, new TokenType[]{
+                TokenType.T_VARIABLE,
+                TokenType.T_LNUMBER
+            } },
+            {TokenType.T_ADD, new TokenType[]{
+                TokenType.T_VARIABLE,
+                TokenType.T_LNUMBER
+            } },
+            {TokenType.T_SUB, new TokenType[]{
+                TokenType.T_VARIABLE,
+                TokenType.T_LNUMBER
+            } }
         };
 
         public static TokenType[] GetNextExpected(this TokenType type)

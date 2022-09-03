@@ -29,7 +29,7 @@ namespace PHP.Core.Lang.Token
             {TokenType.T_CONCAT,                    @"\." },                                         //  .
 
             //  Assignment Operator
-            {TokenType.T_EQUAL,                     @"=" },                                         //  =
+            {TokenType.T_ASSIGNMENT,                     @"=" },                                         //  =
 
             //  Null Coalescing Operator
             {TokenType.T_COALESCE,                  @"\?\?" },                                        //  ??
