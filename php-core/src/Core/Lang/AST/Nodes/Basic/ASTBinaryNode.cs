@@ -1,11 +1,12 @@
-﻿using PHP.Core.Lang.Token;
+﻿using PHP.Core.Lang.AST;
+using PHP.Core.Lang.Token;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Lang.AST
+namespace PHP.Core.Lang.AST.Nodes.Basic
 {
     public class ASTBinaryNode : ASTNode
     {
@@ -19,7 +20,7 @@ namespace PHP.Core.Lang.AST
 
         public override string ToString()
         {
-            return "(" + leftOperand + " " + token.data + " " + rightOperand + ")";
+            return "(" + leftOperand + " " + token.Data + " " + rightOperand + ")";
         }
     }
 }

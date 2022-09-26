@@ -11,7 +11,7 @@ namespace PHP.Tests
 {
     public class LexerTest
     {
-                public static void Main(string[] args)
+         /*       public static void Main(string[] args)
         {
             string code = @"<?php
 $a = 1 - 2 + 3;
@@ -25,6 +25,6 @@ $a = 1 - 2 + 3;
             ASTFile file = builder.Build();
             Console.WriteLine(file.ToString());
             Console.ReadKey();
-        }
+        }*/
     }
 }

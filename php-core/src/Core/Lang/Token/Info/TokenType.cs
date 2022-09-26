@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Lang.Token
+namespace PHP.Core.Lang.Token.Info
 {
     public enum TokenType
     {
@@ -111,7 +111,7 @@ namespace PHP.Core.Lang.Token
         T_INSTANCEOF,               //  instanceof
         T_INSTEADOF,                //  insteadof
         T_NEW,                      //  new
-        //  T_ATTRIBUTE,                                //  attribytes
+                                    //  T_ATTRIBUTE,                                //  attribytes
 
         //  Array
         T_ARRAY,                    //  array()

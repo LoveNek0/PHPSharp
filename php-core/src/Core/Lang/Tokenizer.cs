@@ -1,5 +1,6 @@
 ﻿using PHP.Core.Exceptions;
 using PHP.Core.Lang.Token;
+using PHP.Core.Lang.Token.Info;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,26 @@ namespace PHP.Core.Lang
 {
     public class Tokenizer
     {
+        private static TokenType[] queue =
+        {
+            TokenType.T_WHITESPACE,
+            TokenType.T_OPEN_TAG_WITH_ECHO,
+            TokenType.T_OPEN_TAG,
+            TokenType.T_CLOSE_TAG,
+            TokenType.T_SEMICOLON,
+            TokenType.T_ADD,
+            TokenType.T_SUB,
+            TokenType.T_POW,
+            TokenType.T_MUL,
+            TokenType.T_DIV,
+            TokenType.T_MOD,
+            TokenType.T_ASSIGNMENT,
+            TokenType.T_LNUMBER,
+            TokenType.T_DNUMBER,
+            TokenType.T_VARIABLE,
+            TokenType.T_BRACE_OPEN,
+            TokenType.T_BRACE_CLOSE
+        };
         private string code;
         private int position;
         private int line;
@@ -46,11 +67,13 @@ namespace PHP.Core.Lang
             {
                 string HTML = "";
                 for (int i = position; i < code.Length; i++)
-                    if (TokenType.T_OPEN_TAG.GetPatternRegex().IsMatch(code.Substring(i)) || TokenType.T_OPEN_TAG_WITH_ECHO.GetPatternRegex().IsMatch(code.Substring(i)))
+                    if (TokenType.T_OPEN_TAG.Info().RegexPattern.IsMatch(code.Substring(i)) 
+                        ||
+                        TokenType.T_OPEN_TAG_WITH_ECHO.Info().RegexPattern.IsMatch(code.Substring(i)))
                         break;
                     else
                         HTML += code[i];
-                TokenItem item = new TokenItem(TokenType.T_INLINE_HTML, position, this.line, this.column, HTML);
+                TokenItem item = new TokenItem(TokenType.T_INLINE_HTML, new TokenItem.TokenPosition(this.code, position), HTML);
                 position += HTML.Length;
                 isHTML = false;
                 if (HTML.Length > 0)
@@ -58,13 +81,13 @@ namespace PHP.Core.Lang
                 return null;
             }
             string sub = this.code.Substring(this.position);
-            foreach (TokenType type in TokenQueue.GetQueue()) {
-                Match match = type.GetPatternRegex().Match(sub);
+            foreach (TokenType info in queue) {
+                Match match = info.Info().RegexPattern.Match(sub);
                 if (match.Success && match.Index == 0)
                 {
-                    TokenItem token = new TokenItem(type, position, this.line, this.column, match.Value);
-                    position += token.data.Length;
-                    if (type == TokenType.T_CLOSE_TAG)
+                    TokenItem token = new TokenItem(info, new TokenItem.TokenPosition(this.code, position), match.Value);
+                    position += token.Data.Length;
+                    if (info == TokenType.T_CLOSE_TAG)
                         isHTML = true;
                     return token;
                 }

@@ -1,6 +1,13 @@
-﻿using PHP.Core.Exceptions;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using PHP.Core.Exceptions;
 using PHP.Core.Lang.AST;
+using PHP.Core.Lang.AST.Nodes;
+using PHP.Core.Lang.AST.Nodes.Basic;
 using PHP.Core.Lang.Token;
+using PHP.Core.Lang.Token.Info;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,89 +32,46 @@ namespace PHP.Core.Lang
             };
             List<TokenItem> list = new List<TokenItem>();
             foreach(TokenItem item in tokens)
-                if(!toRemove.Contains(item.type))
+                if(!toRemove.Contains(item.Type))
                     list.Add(item);
             this.tokens = list.ToArray();
             this.position = 0;
         }
 
-        private TokenItem NextToken(params TokenType[] expected)
+        public TokenItem NextToken(params TokenType[] expected)
         {
             if(position >= tokens.Length)
                 return null;
             TokenItem item = tokens[position];
-            if (expected.Contains(item.type))
+            if(item.Type.Info().Family == TokenFamily.Ignore)
+            {
+                position++;
+                return NextToken(expected);
+            }
+            if (expected.Contains(item.Type))
             {
                 position++;
                 return item;
             }
-            throw new SyntaxException("Unexpected token \"" + item.type + "\"", item.position, item.line, item.column);
+            throw new SyntaxException("Unexpected token \"" + item.Type + "\"", item.Position.Index, item.Position.Line, item.Position.Column);
         }
+        public TokenItem NextToken(TokenInfo info) => NextToken(info.Expected);
+        public TokenItem NextToken(TokenItem token) => NextToken(token.Type.Info());
+
         private TokenItem GetToken(int index)
         {
             if (index >= tokens.Length)
                 return null;
             return tokens[index];
         }
-        private ASTNode NextNode(TokenItem token, ASTNode parent = null)
+
+        private ASTNode NextNode(TokenItem token, ASTNode prev = null)
         {
-            if (token == null)
-                return null;
-            switch (token.type)
-            {
-                case TokenType.T_INLINE_HTML:
-                    return new ASTNode(token);
-                case TokenType.T_VARIABLE:
-                    return NextNode(NextToken(token.type.GetNextExpected()), new ASTNode(token));
-                case TokenType.T_ADD:
-                case TokenType.T_SUB:
-                    {
-                        ASTBinaryNode node = new ASTBinaryNode(token, parent);
-                        ASTNode right = NextNode(NextToken(token.type.GetNextExpected()), node);
-                        node.rightOperand = right;
-                        return NextNode(NextToken(TokenType.T_LNUMBER.GetNextExpected()), node);
-                    }
-                case TokenType.T_MUL:
-                case TokenType.T_DIV:
-                    {
-                        ASTBinaryNode node = new ASTBinaryNode(token, parent);
-                        ASTNode right = NextNode(NextToken(token.type.GetNextExpected()), node);
-                        node.rightOperand = right;
-                        return node;
-                    }
-                case TokenType.T_ASSIGNMENT:
-                    {
-                        ASTBinaryNode node = new ASTBinaryNode(token, parent);
-                        node.rightOperand = NextNode(NextToken(token.type.GetNextExpected()));
-                        return node;
-                    }
-                case TokenType.T_LNUMBER:
-                    {
-                        ASTNode node = new ASTNode(token);
-                        TokenItem nextItem = GetToken(position + 1);
-                        if (parent == null
-                            ||
-                            (nextItem != null && (nextItem.type != TokenType.T_MUL || nextItem.type != TokenType.T_DIV)))
-                            return NextNode(NextToken(token.type.GetNextExpected()), node);
-                        return node;
-                    }
-                case TokenType.T_SEMICOLON:
-                    return parent;
-            }
+            if (token.Type == TokenType.T_SEMICOLON)
+                return prev;
+
             return null;
         }
 
-        public ASTFile Build()
-        {
-            ASTFile file = new ASTFile();
-            while(position < tokens.Length)
-            {
-                TokenItem token = NextToken(TokenType.T_INLINE_HTML, TokenType.T_VARIABLE, TokenType.T_ECHO);
-                ASTNode node = NextNode(token);
-                if (node != null)
-                    file.Add(node);
-            }
-            return file;
-        }
     }
 }

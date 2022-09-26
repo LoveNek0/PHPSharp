@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Lang.AST
+namespace PHP.Core.Lang.AST.Nodes.Basic
 {
     public class ASTUnaryNode : ASTNode
     {
@@ -14,7 +14,7 @@ namespace PHP.Core.Lang.AST
 
         public override string ToString()
         {
-            return "((" + token.data + ") >> " + operand + ")";
+            return "((" + token.Data + ") >> " + operand + ")";
         }
     }
 }
