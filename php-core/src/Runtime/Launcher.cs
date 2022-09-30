@@ -1,6 +1,6 @@
 ﻿using PHP.Core.Lang;
+using PHP.Core.Lang.AST;
 using PHP.Core.Lang.AST.Nodes.Basic;
-using PHP.Core.Lang.AST.Parsers;
 using PHP.Core.Lang.Token;
 using PHP.Core.Lang.Token.Info;
 using System;
@@ -21,9 +21,9 @@ namespace PHP.Runtime
             foreach (var item in items)
                 Console.WriteLine(item);
             ASTBuilder builder = new ASTBuilder(items);
-            ExpressionParser expressionParser = new ExpressionParser(builder);
-            ASTNode node = expressionParser.Parse();
-            Console.WriteLine(node);
+            
+            Console.WriteLine(builder.NextNode());
+            Console.WriteLine("End.");
             Console.ReadKey();
         }
     }

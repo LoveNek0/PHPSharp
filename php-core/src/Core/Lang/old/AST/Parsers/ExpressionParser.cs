@@ -18,7 +18,73 @@ namespace PHP.Core.Lang.AST.Parsers
         private bool CompareOperators(TokenInfo op1, TokenInfo op2) =>
             op1.Side == TokenSide.Right ? op1.Priority < op2.Priority : op1.Priority <= op2.Priority;
 
-        private IEnumerable<TokenItem> ShuntingYard()
+        public IEnumerable<TokenItem> ShuntingYard1()
+        {
+            var stack = new Stack<TokenItem>();
+            List<TokenItem> items = new List<TokenItem>();
+            TokenItem token = builder.NextToken(
+                TokenType.T_VARIABLE
+            );
+            while (token.Type != TokenType.T_SEMICOLON)
+            {
+                switch (token.Type.Info().Family)
+                {
+                    case TokenFamily.Data:
+                        items.Add(token);
+                        break;
+                    case TokenFamily.Separator:
+                        while (stack.Peek().Type != TokenType.T_BRACE_OPEN)
+                            items.Add(stack.Pop());
+                        break;
+                    case TokenFamily.BinaryOparator:
+                        while (stack.Any() && stack.Peek().Type.Info().Family == TokenFamily.BinaryOparator && CompareOperators(token.Type.Info(), stack.Peek().Type.Info()))
+                            items.Add(stack.Pop());
+                        stack.Push(token);
+                        break;
+                    case TokenFamily.TernaryOperator:
+                        switch (token.Type)
+                        {
+                            case TokenType.T_QUERY:
+                                while (stack.Any() && stack.Peek().Type.Info().Family == TokenFamily.BinaryOparator && CompareOperators(token.Type.Info(), stack.Peek().Type.Info()))
+                                    items.Add(stack.Pop());
+                                stack.Push(token);
+                                break;
+                            case TokenType.T_COLON:
+                                while (stack.Peek().Type != TokenType.T_QUERY)
+                                    items.Add(stack.Pop());
+                                stack.Push(token);
+                                break;
+                        }
+                        break;
+                    case TokenFamily.Brace:
+                        switch (token.Type)
+                        {
+                            case TokenType.T_BRACE_OPEN:
+                                stack.Push(token);
+                                break;
+                            case TokenType.T_BRACE_CLOSE:
+                                while (stack.Peek().Type != TokenType.T_BRACE_OPEN)
+                                    items.Add(stack.Pop());
+                                stack.Pop();
+                                if (stack.Peek().Type == TokenType.T_FUNCTION)
+                                    items.Add(stack.Pop());
+                                break;
+                        }
+                        break;
+                }
+                token = builder.NextToken(token);
+            }
+            while (stack.Any())
+            {
+                var tok = stack.Pop();
+                if (tok.Type == TokenType.T_BRACE_OPEN || tok.Type == TokenType.T_BRACE_CLOSE)
+                    throw new Exception("Mismatched parentheses");
+                items.Add(tok);
+            }
+            return items;
+        }
+
+        public IEnumerable<TokenItem> ShuntingYard()
         {
             var stack = new Stack<TokenItem>();
             TokenItem token = builder.NextToken(
@@ -38,6 +104,22 @@ namespace PHP.Core.Lang.AST.Parsers
                     case TokenFamily.BinaryOparator:
                         while (stack.Any() && stack.Peek().Type.Info().Family == TokenFamily.BinaryOparator && CompareOperators(token.Type.Info(), stack.Peek().Type.Info()))
                             yield return stack.Pop();
+                        stack.Push(token);
+                        break;
+                    case TokenFamily.TernaryOperator:
+                        switch (token.Type)
+                        {
+                            case TokenType.T_QUERY:
+                                while (stack.Any() && stack.Peek().Type.Info().Family == TokenFamily.BinaryOparator && CompareOperators(token.Type.Info(), stack.Peek().Type.Info()))
+                                    yield return stack.Pop();
+                                stack.Push(token);
+                                break;
+                            case TokenType.T_COLON:
+                                while (stack.Peek().Type != TokenType.T_QUERY)
+                                    yield return stack.Pop();
+                                stack.Pop();
+                                break;
+                        }
                         stack.Push(token);
                         break;
                     case TokenFamily.Brace:
@@ -106,7 +188,7 @@ namespace PHP.Core.Lang.AST.Parsers
             }
         }
 
-        private ASTNode BuildNode(ref List<TokenItem> tokens)
+        public ASTNode BuildNode(ref List<TokenItem> tokens)
         {
             if (tokens.Count() == 0)
                 return null;
@@ -120,7 +202,18 @@ namespace PHP.Core.Lang.AST.Parsers
                     {
                         ASTBinaryNode node = new ASTBinaryNode(token);
                         node.rightOperand = BuildNode(ref tokens);
+                        node.rightOperand.parent = node;
                         node.leftOperand = BuildNode(ref tokens);
+                        node.leftOperand.parent = node;
+                        return node;
+                    }
+                case TokenFamily.TernaryOperator:
+                    {
+                        ASTBinaryNode node = new ASTBinaryNode(token);
+                        node.rightOperand = BuildNode(ref tokens);
+                        node.rightOperand.parent = node;
+                        node.leftOperand = BuildNode(ref tokens);
+                        node.leftOperand.parent = node;
                         return node;
                     }
             }
@@ -129,7 +222,7 @@ namespace PHP.Core.Lang.AST.Parsers
 
         public ASTNode Parse()
         {
-            List<TokenItem> tokens = new List<TokenItem>(ShuntingYard());
+            List<TokenItem> tokens = new List<TokenItem>(ShuntingYard1());
             return BuildNode(ref tokens);
         }
 

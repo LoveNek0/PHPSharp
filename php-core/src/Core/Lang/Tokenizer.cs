@@ -14,23 +14,35 @@ namespace PHP.Core.Lang
     {
         private static TokenType[] queue =
         {
+            //  Ingone
             TokenType.T_WHITESPACE,
             TokenType.T_OPEN_TAG_WITH_ECHO,
             TokenType.T_OPEN_TAG,
             TokenType.T_CLOSE_TAG,
+
+            //  Separators
             TokenType.T_SEMICOLON,
+            TokenType.T_BRACE_OPEN,
+            TokenType.T_BRACE_CLOSE,
+
+            //  String operators
+            TokenType.T_ECHO,
+            
+            TokenType.T_ASSIGNMENT,
+
+            //  Math operators
             TokenType.T_ADD,
             TokenType.T_SUB,
             TokenType.T_POW,
             TokenType.T_MUL,
             TokenType.T_DIV,
             TokenType.T_MOD,
-            TokenType.T_ASSIGNMENT,
+
             TokenType.T_LNUMBER,
             TokenType.T_DNUMBER,
             TokenType.T_VARIABLE,
-            TokenType.T_BRACE_OPEN,
-            TokenType.T_BRACE_CLOSE
+            TokenType.T_COLON,
+            TokenType.T_QUERY
         };
         private string code;
         private int position;

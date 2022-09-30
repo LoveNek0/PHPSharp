@@ -15,6 +15,7 @@ namespace PHP.Core.Lang.Token.Info
         Data,
         UnaryOperator,
         BinaryOparator,
-        TernaryOperator
+        TernaryOperator,
+        Loop
     }
 }

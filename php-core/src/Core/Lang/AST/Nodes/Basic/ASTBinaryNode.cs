@@ -1,5 +1,4 @@
-﻿using PHP.Core.Lang.AST;
-using PHP.Core.Lang.Token;
+﻿using PHP.Core.Lang.Token;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +9,29 @@ namespace PHP.Core.Lang.AST.Nodes.Basic
 {
     public class ASTBinaryNode : ASTNode
     {
-        public ASTNode leftOperand;
-        public ASTNode rightOperand;
-        public ASTBinaryNode(TokenItem token, ASTNode leftOperand = null, ASTNode rightOperand = null) : base(token)
+        internal ASTNode left;
+        internal ASTNode right;
+        internal uint deep;
+
+        public ASTNode Left
         {
-            this.leftOperand = leftOperand;
-            this.rightOperand = rightOperand;
+            get => left;
+            private set => left = value;
+        }
+        public ASTNode Right
+        {
+            get => right;
+            private set => right = value;
         }
 
-        public override string ToString()
+        protected ASTBinaryNode(TokenItem token, uint deep, ASTNode left = null, ASTNode right = null) : base(token)
         {
-            return "(" + leftOperand + " " + token.Data + " " + rightOperand + ")";
+            this.deep = deep;
+            this.left = left;
+            this.right = right;
         }
+
+        public override string ToString() =>
+            "(" + Left + " " + Token.Data + " " + Right + ")";
     }
 }

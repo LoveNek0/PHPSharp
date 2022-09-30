@@ -9,18 +9,9 @@ namespace PHP.Core.Lang.AST.Nodes.Basic
 {
     public class ASTNode
     {
-        public readonly TokenItem token;
-        public ASTNode parent = null;
-        public ASTNode(TokenItem token) => this.token = token;
-        public ASTNode(TokenItem token, ASTNode parent)
-        {
-            this.token = token;
-            this.parent = parent;
-        }
+        public readonly TokenItem Token;
+        protected ASTNode(TokenItem token) => Token = token;
 
-        public override string ToString()
-        {
-            return "(" + token.Data + ")";
-        }
+        public override string ToString() => "(" + Token.Data + ")";
     }
 }

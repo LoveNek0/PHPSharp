@@ -8,10 +8,39 @@ using System.Threading.Tasks;
 
 namespace PHP.Core.Lang.Token
 {
-    public static class TokenInfoList
+    public static class TokenList
     {
         private static TokenInfo[] list =
         {
+            new TokenInfo(
+                TokenType.T_WHILE,
+                TokenFamily.Loop,
+                TokenPriority.VeryLow,
+                TokenSide.None,
+                @"[w][h][i][l][e]",
+                new TokenType[]{
+                    TokenType.T_CURLY_BRACE_OPEN
+                }
+            ),
+            new TokenInfo(
+                TokenType.T_ECHO,
+                TokenFamily.Loop,
+                TokenPriority.VeryLow,
+                TokenSide.None,
+                @"[Ee][Cc][Hh][Oo]",
+                new TokenType[]{
+                }
+            ),
+            new TokenInfo(
+                TokenType.T_CURLY_BRACE_OPEN,
+                TokenFamily.Loop,
+                TokenPriority.VeryLow,
+                TokenSide.None,
+                @"[{]",
+                new TokenType[]{
+                    TokenType.T_CURLY_BRACE_OPEN
+                }
+            ),
             new TokenInfo(
                 TokenType.T_SEMICOLON,
                 TokenFamily.EndOfLine,
@@ -20,7 +49,11 @@ namespace PHP.Core.Lang.Token
                 @"[;]",
                 new TokenType[]{
                     TokenType.T_SEMICOLON,
-                    TokenType.T_VARIABLE
+                    TokenType.T_VARIABLE,
+                    TokenType.T_LNUMBER,
+                    TokenType.T_DNUMBER,
+                    TokenType.T_VARIABLE,
+                    TokenType.T_BRACE_OPEN
                 }
             ),
             new TokenInfo(
@@ -112,7 +145,7 @@ namespace PHP.Core.Lang.Token
             new TokenInfo(
                 TokenType.T_ASSIGNMENT,
                 TokenFamily.BinaryOparator,
-                TokenPriority.High,
+                TokenPriority.VeryHigh,
                 TokenSide.Right,
                 @"[=]",
                 new TokenType[]{
@@ -136,7 +169,9 @@ namespace PHP.Core.Lang.Token
                     TokenType.T_POW,
                     TokenType.T_MOD,
                     TokenType.T_BRACE_CLOSE,
-                    TokenType.T_SEMICOLON
+                    TokenType.T_SEMICOLON,
+                    TokenType.T_QUERY,
+                    TokenType.T_COLON
                 }
             ),
             new TokenInfo(
@@ -153,7 +188,9 @@ namespace PHP.Core.Lang.Token
                     TokenType.T_POW,
                     TokenType.T_MOD,
                     TokenType.T_BRACE_CLOSE,
-                    TokenType.T_SEMICOLON
+                    TokenType.T_SEMICOLON,
+                    TokenType.T_QUERY,
+                    TokenType.T_COLON
                 }
             ),
             new TokenInfo(
@@ -171,7 +208,9 @@ namespace PHP.Core.Lang.Token
                     TokenType.T_MOD,
                     TokenType.T_ASSIGNMENT,
                     TokenType.T_BRACE_CLOSE,
-                    TokenType.T_SEMICOLON
+                    TokenType.T_SEMICOLON,
+                    TokenType.T_QUERY,
+                    TokenType.T_COLON
                 }
             ),
             new TokenInfo(
@@ -202,14 +241,42 @@ namespace PHP.Core.Lang.Token
                     TokenType.T_MOD,
                     TokenType.T_ASSIGNMENT,
                     TokenType.T_BRACE_CLOSE,
-                    TokenType.T_SEMICOLON
+                    TokenType.T_SEMICOLON,
+                    TokenType.T_QUERY,
+                    TokenType.T_COLON
+                }
+            ),
+            new TokenInfo(
+                TokenType.T_QUERY,
+                TokenFamily.TernaryOperator,
+                TokenPriority.Normal,
+                TokenSide.Right,
+                @"[?]",
+                new TokenType[]{
+                    TokenType.T_LNUMBER,
+                    TokenType.T_DNUMBER,
+                    TokenType.T_VARIABLE,
+                    TokenType.T_BRACE_OPEN
+                }
+            ),
+            new TokenInfo(
+                TokenType.T_COLON,
+                TokenFamily.TernaryOperator,
+                TokenPriority.Normal,
+                TokenSide.Right,
+                @"[:]",
+                new TokenType[]{
+                    TokenType.T_LNUMBER,
+                    TokenType.T_DNUMBER,
+                    TokenType.T_VARIABLE,
+                    TokenType.T_BRACE_OPEN
                 }
             ),
             new TokenInfo(
                 TokenType.T_OPEN_TAG_WITH_ECHO,
                 TokenFamily.UnaryOperator,
-                TokenPriority.VeryLow,
-                TokenSide.None,
+                TokenPriority.High,
+                TokenSide.Right,
                 @"<[?%]=",
                 new TokenType[]{
                     TokenType.T_LNUMBER,

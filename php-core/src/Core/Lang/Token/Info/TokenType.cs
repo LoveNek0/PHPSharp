@@ -111,6 +111,7 @@ namespace PHP.Core.Lang.Token.Info
         T_INSTANCEOF,               //  instanceof
         T_INSTEADOF,                //  insteadof
         T_NEW,                      //  new
+        T_QUERY,                    //  ?
                                     //  T_ATTRIBUTE,                                //  attribytes
 
         //  Array
