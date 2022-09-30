@@ -24,9 +24,12 @@ namespace PHP.Core.Lang
             TokenType.T_SEMICOLON,
             TokenType.T_BRACE_OPEN,
             TokenType.T_BRACE_CLOSE,
+            TokenType.T_CURLY_BRACE_OPEN,
+            TokenType.T_CURLY_BRACE_CLOSE,
 
             //  String operators
             TokenType.T_ECHO,
+            TokenType.T_WHILE,
             
             TokenType.T_ASSIGNMENT,
 
@@ -119,6 +122,7 @@ namespace PHP.Core.Lang
                 if(token != null)
                     tokens.Add(token);
             }
+            tokens.RemoveAll(val => val.Type.Info().Family == TokenFamily.Ignore);
             return tokens.ToArray();
         }
 

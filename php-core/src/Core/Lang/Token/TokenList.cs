@@ -42,6 +42,16 @@ namespace PHP.Core.Lang.Token
                 }
             ),
             new TokenInfo(
+                TokenType.T_CURLY_BRACE_CLOSE,
+                TokenFamily.Loop,
+                TokenPriority.VeryLow,
+                TokenSide.None,
+                @"[}]",
+                new TokenType[]{
+                    TokenType.T_CURLY_BRACE_OPEN
+                }
+            ),
+            new TokenInfo(
                 TokenType.T_SEMICOLON,
                 TokenFamily.EndOfLine,
                 TokenPriority.VeryLow,

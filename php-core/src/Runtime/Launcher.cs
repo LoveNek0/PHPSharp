@@ -22,7 +22,7 @@ namespace PHP.Runtime
                 Console.WriteLine(item);
             ASTBuilder builder = new ASTBuilder(items);
             
-            Console.WriteLine(builder.NextNode());
+            Console.WriteLine(builder.Build());
             Console.WriteLine("End.");
             Console.ReadKey();
         }

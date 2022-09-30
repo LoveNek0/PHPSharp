@@ -1,6 +1,9 @@
-﻿using PHP.Core.Lang.AST.Nodes.Basic;
+﻿using PHP.Core.Exceptions;
+using PHP.Core.Lang.AST.Nodes.Basic;
 using PHP.Core.Lang.AST.Nodes.BinaryExpression;
 using PHP.Core.Lang.AST.Nodes.Data;
+using PHP.Core.Lang.AST.Nodes.Loop;
+using PHP.Core.Lang.AST.Nodes.Structure;
 using PHP.Core.Lang.AST.Nodes.UnaryExpression;
 using PHP.Core.Lang.Token;
 using PHP.Core.Lang.Token.Info;
@@ -15,7 +18,7 @@ namespace PHP.Core.Lang.AST
     public class ASTBuilder
     {
         private TokenItem[] tokens;
-        private uint position;
+        private int position;
 
         public ASTBuilder(TokenItem[] tokens)
         {
@@ -23,30 +26,53 @@ namespace PHP.Core.Lang.AST
             Reset();
         }
 
-        public void Reset()
+        public void Reset() => this.position = 0;
+
+        private TokenItem PeekToken()
         {
-            this.position = 0;
+            if (position >= tokens.Count())
+                return null;
+            return tokens[position];
+        }
+        private TokenItem PeekToken(params TokenType[] expected)
+        {
+            TokenItem next = PeekToken();
+            if(expected.Contains(next.Type))
+                return next;
+            throw new SyntaxException("Unexpected token " + next.Type, next.Position.Index, next.Position.Line, next.Position.Column);
         }
 
-        public ASTNode NextNode()
+        private TokenItem NextToken()
+        {
+            TokenItem next = PeekToken();
+            position++;
+            return next;
+        }
+        private TokenItem NextToken(params TokenType[] expected)
+        {
+            TokenItem next = PeekToken(expected);
+            position++;
+            return next;
+        }
+
+        private ASTNode NextNode()
         {
             bool eol = false;
             return NextNode(ref eol);
         }
-        public ASTNode NextNode(ref bool eol, uint deep = 0, TokenType endTokenType = TokenType.T_SEMICOLON, ASTNode prev = null)
+        private ASTNode NextNode(ref bool eol, uint deep = 0, TokenType endTokenType = TokenType.T_SEMICOLON, ASTNode prev = null)
         {
             if (eol)
                 return prev;
-        re:
-            TokenItem token = tokens[position++];
-            if (token.Type.Info().Family == TokenFamily.Ignore)
-                goto re;
+
+            TokenItem token = NextToken();
 
             if (token.Type == endTokenType)
             {
                 eol = true;
                 return prev;
             }
+
             switch (token.Type)
             {
                 case TokenType.T_LNUMBER:
@@ -224,8 +250,40 @@ namespace PHP.Core.Lang.AST
                         node.operand = NextNode(ref eol, deep, endTokenType, node);
                         return node;
                     }
+                case TokenType.T_WHILE:
+                    {
+                        ASTWhileNode node = new ASTWhileNode(token);
+
+                        bool conEnd = false;
+                        NextToken(TokenType.T_BRACE_OPEN);
+                        node.condition = NextNode(ref conEnd, 0, TokenType.T_BRACE_CLOSE);
+                        
+                        NextToken(TokenType.T_CURLY_BRACE_OPEN);
+
+                        TokenItem next = PeekToken();
+                        while(next.Type != TokenType.T_CURLY_BRACE_CLOSE)
+                        {
+                            ASTNode n = NextNode();
+                            if (n != null)
+                                node.Add(n);
+                            next = PeekToken();
+                        }
+                        return node;
+                    }
             }
             return null;
         }
+
+        public ASTRootNode Build()
+        {
+            ASTRootNode node = new ASTRootNode();
+            while(position < tokens.Length)
+            {
+                ASTNode next = NextNode();
+                if (next != null)
+                    node.Add(next);
+            }
+            return node;
+        } 
     }
 }
