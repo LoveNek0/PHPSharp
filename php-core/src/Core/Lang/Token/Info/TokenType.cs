@@ -16,6 +16,16 @@ namespace PHP.Core.Lang.Token.Info
         T_MOD,                      //  %
         T_POW,                      //  **
 
+        //  Assignment with Operator
+        T_ADD_ASSIGNMENT,           //  +=
+        T_SUB_ASSIGNMENT,           //  -=
+        T_MUL_ASSIGNMENT,           //  *=
+        T_DIV_ASSIGNMENT,           //  /=
+        T_MOD_ASSIGNMENT,           //  %=
+        T_POW_ASSIGNMENT,           //  **=
+        T_CONCAT_ASSIGNMENT,        //  .=
+
+
         //  Bitwise Operator
         T_BIT_AND,                  //  &
         T_BIT_XOR,                  //  ^
@@ -32,13 +42,7 @@ namespace PHP.Core.Lang.Token.Info
         //  Null Coalescing Operator
         T_COALESCE,                 //  ??
 
-        //  Assignment with Arithmetic Operator
-        T_PLUS_EQUAL,               //  +=
-        T_MINUS_EQUAL,              //  -=
-        T_MUL_EQUAL,                //  *=
-        T_DIV_EQUAL,                //  /=
-        T_MOD_EQUAL,                //  %=
-        T_POW_EQUAL,                //  **=
+        
 
         //  Assignment with Bitwise Operator
         T_BIT_AND_EQUAL,            //  &=
@@ -48,7 +52,6 @@ namespace PHP.Core.Lang.Token.Info
         T_BIT_SHIFT_RIGHT_EQUAL,    //  >>=
 
         //  Assignment with String Operator
-        T_CONCAT_EQUAL,             //  .=
 
         //  Assignment with Null Coalescing Operator
         T_COALESCE_EQUAL,           //  ??=

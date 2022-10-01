@@ -17,7 +17,7 @@ namespace PHP.Core.Lang.Token
                 TokenFamily.Loop,
                 TokenPriority.VeryLow,
                 TokenSide.None,
-                @"[w][h][i][l][e]",
+                @"[Ww][Hh][Ii][Ll][Ee]",
                 new TokenType[]{
                     TokenType.T_CURLY_BRACE_OPEN
                 }
@@ -29,6 +29,7 @@ namespace PHP.Core.Lang.Token
                 TokenSide.None,
                 @"[Ee][Cc][Hh][Oo]",
                 new TokenType[]{
+
                 }
             ),
             new TokenInfo(
@@ -146,10 +147,6 @@ namespace PHP.Core.Lang.Token
                 TokenSide.Left,
                 @"[%]",
                 new TokenType[]{
-                    TokenType.T_LNUMBER,
-                    TokenType.T_DNUMBER,
-                    TokenType.T_VARIABLE,
-                    TokenType.T_BRACE_OPEN
                 }
             ),
             new TokenInfo(
@@ -159,10 +156,78 @@ namespace PHP.Core.Lang.Token
                 TokenSide.Right,
                 @"[=]",
                 new TokenType[]{
-                    TokenType.T_LNUMBER,
-                    TokenType.T_DNUMBER,
-                    TokenType.T_VARIABLE,
-                    TokenType.T_BRACE_OPEN
+                }
+            ),
+            new TokenInfo(
+                TokenType.T_ADD_ASSIGNMENT,
+                TokenFamily.BinaryOparator,
+                TokenPriority.VeryHigh,
+                TokenSide.Right,
+                @"[+][=]",
+                new TokenType[]{
+                }
+            ),
+            new TokenInfo(
+                TokenType.T_CONCAT,
+                TokenFamily.BinaryOparator,
+                TokenPriority.VeryHigh,
+                TokenSide.Left,
+                @"[.]",
+                new TokenType[]{
+                }
+            ),
+            new TokenInfo(
+                TokenType.T_CONCAT_ASSIGNMENT,
+                TokenFamily.BinaryOparator,
+                TokenPriority.VeryHigh,
+                TokenSide.Left,
+                @"[.][=]",
+                new TokenType[]{
+                }
+            ),
+            new TokenInfo(
+                TokenType.T_SUB_ASSIGNMENT,
+                TokenFamily.BinaryOparator,
+                TokenPriority.VeryHigh,
+                TokenSide.Right,
+                @"[-][=]",
+                new TokenType[]{
+                }
+            ),
+            new TokenInfo(
+                TokenType.T_MUL_ASSIGNMENT,
+                TokenFamily.BinaryOparator,
+                TokenPriority.VeryHigh,
+                TokenSide.Right,
+                @"[*][=]",
+                new TokenType[]{
+                }
+            ),
+            new TokenInfo(
+                TokenType.T_DIV_ASSIGNMENT,
+                TokenFamily.BinaryOparator,
+                TokenPriority.VeryHigh,
+                TokenSide.Right,
+                @"[/][=]",
+                new TokenType[]{
+                }
+            ),
+            new TokenInfo(
+                TokenType.T_MOD_ASSIGNMENT,
+                TokenFamily.BinaryOparator,
+                TokenPriority.VeryHigh,
+                TokenSide.Right,
+                @"[%][=]",
+                new TokenType[]{
+                }
+            ),
+            new TokenInfo(
+                TokenType.T_POW_ASSIGNMENT,
+                TokenFamily.BinaryOparator,
+                TokenPriority.VeryHigh,
+                TokenSide.Right,
+                @"[*][*][=]",
+                new TokenType[]{
                 }
             ),
             new TokenInfo(
@@ -172,16 +237,6 @@ namespace PHP.Core.Lang.Token
                 TokenSide.None,
                 @"[0-9]+",
                 new TokenType[]{
-                    TokenType.T_ADD,
-                    TokenType.T_SUB,
-                    TokenType.T_MUL,
-                    TokenType.T_DIV,
-                    TokenType.T_POW,
-                    TokenType.T_MOD,
-                    TokenType.T_BRACE_CLOSE,
-                    TokenType.T_SEMICOLON,
-                    TokenType.T_QUERY,
-                    TokenType.T_COLON
                 }
             ),
             new TokenInfo(

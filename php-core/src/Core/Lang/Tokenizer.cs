@@ -31,7 +31,15 @@ namespace PHP.Core.Lang
             TokenType.T_ECHO,
             TokenType.T_WHILE,
             
+            //  Assignment
             TokenType.T_ASSIGNMENT,
+            TokenType.T_ADD_ASSIGNMENT,
+            TokenType.T_SUB_ASSIGNMENT,
+            TokenType.T_POW_ASSIGNMENT,
+            TokenType.T_MUL_ASSIGNMENT,
+            TokenType.T_DIV_ASSIGNMENT,
+            TokenType.T_MOD_ASSIGNMENT,
+            TokenType.T_CONCAT_ASSIGNMENT,
 
             //  Math operators
             TokenType.T_ADD,
@@ -40,6 +48,7 @@ namespace PHP.Core.Lang
             TokenType.T_MUL,
             TokenType.T_DIV,
             TokenType.T_MOD,
+            TokenType.T_CONCAT,
 
             TokenType.T_LNUMBER,
             TokenType.T_DNUMBER,

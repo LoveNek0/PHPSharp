@@ -87,6 +87,7 @@ namespace PHP.Core.Lang.AST
                                 case TokenType.T_DIV:
                                 case TokenType.T_MOD:
                                 case TokenType.T_POW:
+                                case TokenType.T_CONCAT:
                                     return node;
                             }
                         return NextNode(ref eol, deep, endTokenType, node);
@@ -103,6 +104,7 @@ namespace PHP.Core.Lang.AST
                                 case TokenType.T_DIV:
                                 case TokenType.T_MOD:
                                 case TokenType.T_POW:
+                                case TokenType.T_CONCAT:
                                     return node;
                             }
                         return NextNode(ref eol, deep, endTokenType, node);
@@ -119,6 +121,7 @@ namespace PHP.Core.Lang.AST
                                 case TokenType.T_DIV:
                                 case TokenType.T_MOD:
                                 case TokenType.T_POW:
+                                case TokenType.T_CONCAT:
                                     return node;
                             }
                         return NextNode(ref eol, deep, endTokenType, node);
@@ -126,6 +129,55 @@ namespace PHP.Core.Lang.AST
                 case TokenType.T_ASSIGNMENT:
                     {
                         ASTAssignmentNode node = new ASTAssignmentNode(token, deep);
+                        node.left = prev;
+                        node.right = NextNode(ref eol, deep, endTokenType, node);
+                        return node;
+                    }
+                case TokenType.T_ADD_ASSIGNMENT:
+                    {
+                        ASTAddAssignmentNode node = new ASTAddAssignmentNode(token, deep);
+                        node.left = prev;
+                        node.right = NextNode(ref eol, deep, endTokenType, node);
+                        return node;
+                    }
+                case TokenType.T_SUB_ASSIGNMENT:
+                    {
+                        ASTSubAssignmentNode node = new ASTSubAssignmentNode(token, deep);
+                        node.left = prev;
+                        node.right = NextNode(ref eol, deep, endTokenType, node);
+                        return node;
+                    }
+                case TokenType.T_MUL_ASSIGNMENT:
+                    {
+                        ASTMulAssignmentNode node = new ASTMulAssignmentNode(token, deep);
+                        node.left = prev;
+                        node.right = NextNode(ref eol, deep, endTokenType, node);
+                        return node;
+                    }
+                case TokenType.T_DIV_ASSIGNMENT:
+                    {
+                        ASTDivAssignmentNode node = new ASTDivAssignmentNode(token, deep);
+                        node.left = prev;
+                        node.right = NextNode(ref eol, deep, endTokenType, node);
+                        return node;
+                    }
+                case TokenType.T_MOD_ASSIGNMENT:
+                    {
+                        ASTModAssignmentNode node = new ASTModAssignmentNode(token, deep);
+                        node.left = prev;
+                        node.right = NextNode(ref eol, deep, endTokenType, node);
+                        return node;
+                    }
+                case TokenType.T_POW_ASSIGNMENT:
+                    {
+                        ASTPowAssignmentNode node = new ASTPowAssignmentNode(token, deep);
+                        node.left = prev;
+                        node.right = NextNode(ref eol, deep, endTokenType, node);
+                        return node;
+                    }
+                case TokenType.T_CONCAT_ASSIGNMENT:
+                    {
+                        ASTConcatAssignmentNode node = new ASTConcatAssignmentNode(token, deep);
                         node.left = prev;
                         node.right = NextNode(ref eol, deep, endTokenType, node);
                         return node;
@@ -215,6 +267,30 @@ namespace PHP.Core.Lang.AST
                             {
                                 case TokenType.T_ADD:
                                 case TokenType.T_SUB:
+                                    if (((ASTBinaryNode)prev).deep == deep)
+                                    {
+                                        node.left = ((ASTBinaryNode)prev).right;
+                                        ((ASTBinaryNode)prev).right = node;
+                                        node.right = NextNode(ref eol, deep, endTokenType, node);
+                                        return NextNode(ref eol, deep, endTokenType, prev);
+                                    }
+                                    break;
+                            }
+                        node.left = prev;
+                        node.right = NextNode(ref eol, deep, endTokenType, node);
+                        return NextNode(ref eol, deep, endTokenType, node);
+                    }
+                case TokenType.T_CONCAT:
+                    {
+                        ASTPowNode node = new ASTPowNode(token, deep);
+                        if (prev != null)
+                            switch (prev.Token.Type)
+                            {
+                                case TokenType.T_ADD:
+                                case TokenType.T_SUB:
+                                case TokenType.T_MUL:
+                                case TokenType.T_DIV:
+                                case TokenType.T_MOD:
                                     if (((ASTBinaryNode)prev).deep == deep)
                                     {
                                         node.left = ((ASTBinaryNode)prev).right;
