@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Lang.Token.Info
+namespace PHP.Core.Lang.AST.Nodes
 {
-    public enum TokenSide
+    public class ASTFunctionParamsNode
     {
-        None,
-        Left,
-        Right
     }
 }

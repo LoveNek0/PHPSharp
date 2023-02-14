@@ -1,6 +1,5 @@
 ﻿using PHP.Core.Exceptions;
 using PHP.Core.Lang.Token;
-using PHP.Core.Lang.Token.Info;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +29,10 @@ namespace PHP.Core.Lang
             //  String operators
             TokenType.T_ECHO,
             TokenType.T_WHILE,
+            TokenType.T_FUNCTION,
+            TokenType.T_RETURN,
+            TokenType.T_FOR,
+            TokenType.T_FOREACH,
             
             //  Assignment
             TokenType.T_ASSIGNMENT,
@@ -42,6 +45,7 @@ namespace PHP.Core.Lang
             TokenType.T_CONCAT_ASSIGNMENT,
 
             //  Math operators
+            TokenType.T_INCREMENT,
             TokenType.T_ADD,
             TokenType.T_SUB,
             TokenType.T_POW,
@@ -49,9 +53,10 @@ namespace PHP.Core.Lang
             TokenType.T_DIV,
             TokenType.T_MOD,
             TokenType.T_CONCAT,
-
-            TokenType.T_LNUMBER,
+            
+            TokenType.T_STRING,
             TokenType.T_DNUMBER,
+            TokenType.T_LNUMBER,
             TokenType.T_VARIABLE,
             TokenType.T_COLON,
             TokenType.T_QUERY
@@ -131,7 +136,6 @@ namespace PHP.Core.Lang
                 if(token != null)
                     tokens.Add(token);
             }
-            tokens.RemoveAll(val => val.Type.Info().Family == TokenFamily.Ignore);
             return tokens.ToArray();
         }
 

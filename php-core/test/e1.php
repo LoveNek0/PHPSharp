@@ -1,7 +1,12 @@
 <?php
 $var = 0;
-while($var + 1){
-	$var += (1 . 2 * 3 - (4 / 5 + (6 * 7)) - 8) ** 9 % 10 * (11 - 12);
-	$var **= $var;
+while(1 + 2){
+	echo 1;
 }
-echo 0;
+while(1 + 2)
+	echo 2;
+for($i = 0; $i; ++$i){
+	echo 3;
+}
+for($i = 0; $i; $i++)
+	echo 3;

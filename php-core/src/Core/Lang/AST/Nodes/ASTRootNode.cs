@@ -1,17 +1,16 @@
-﻿using PHP.Core.Lang.AST.Nodes.Basic;
-using PHP.Core.Lang.Token;
+﻿using PHP.Core.Lang.Token;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Lang.AST.Nodes.Structure
+namespace PHP.Core.Lang.AST.Nodes
 {
     public class ASTRootNode
     {
         private List<ASTNode> children = new List<ASTNode>();
-        internal ASTRootNode()
+        public ASTRootNode()
         {
         }
 

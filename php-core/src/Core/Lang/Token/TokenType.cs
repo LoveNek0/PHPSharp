@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Lang.Token.Info
+namespace PHP.Core.Lang.Token
 {
     public enum TokenType
     {
@@ -73,8 +73,8 @@ namespace PHP.Core.Lang.Token.Info
         T_SPACESHIP,                //  <=>
 
         //  Incrementing/Decrementing Operator
-        T_DEC,                      //  --
-        T_INC,                      //  ++
+        T_DECREMENT,                //  --
+        T_INCREMENT,                //  ++
 
         //  Data
         T_LNUMBER,                  //  123 012 0x1ac

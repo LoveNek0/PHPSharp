@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Lang.AST.Nodes.Basic
+namespace PHP.Core.Lang.AST.Nodes
 {
     public class ASTBinaryNode : ASTNode
     {
@@ -24,14 +24,15 @@ namespace PHP.Core.Lang.AST.Nodes.Basic
             private set => right = value;
         }
 
-        protected ASTBinaryNode(TokenItem token, uint deep, ASTNode left = null, ASTNode right = null) : base(token)
+        public ASTBinaryNode(TokenItem token, uint deep, ASTNode left = null, ASTNode right = null) : base(token)
         {
             this.deep = deep;
             this.left = left;
             this.right = right;
         }
 
-        public override string ToString() =>
-            "(" + Left + " " + Token.Data + " " + Right + ")";
+        public override string ToString(int offset) =>
+            new string(' ', offset) + "(" + Left + " " + Token.Data + " " + Right + ")";
+        public override string ToString() => ToString(0);
     }
 }

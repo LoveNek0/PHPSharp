@@ -1,5 +1,4 @@
-﻿using PHP.Core.Lang.Token.Info;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,13 +10,13 @@ namespace PHP.Core.Lang.Token
     {
 		public class TokenPosition
         {
-			public readonly int Index;
+			public readonly int Position;
 			public readonly int Line;
 			public readonly int Column;
 
 			public TokenPosition(string code, int index)
             {
-				this.Index = index;
+				this.Position = index;
 				this.Line = 0;
 				this.Column = 0;
 				for(int i = 0; i < code.Length && i <= index; i++)
@@ -31,12 +30,12 @@ namespace PHP.Core.Lang.Token
             }
 			public TokenPosition(int index, int line, int column)
             {
-				Index = index;
+				Position = index;
 				Line = line;
 				Column = column;
             }
 
-            public override string ToString() => "[" + Index + ":" + Line + "." + Column + "]";
+            public override string ToString() => "[" + Position + ":" + Line + "." + Column + "]";
         }
 
 		public readonly TokenType Type;
@@ -67,17 +66,17 @@ namespace PHP.Core.Lang.Token
 			s += string.Join("", Enumerable.Repeat("\t", offset));
 			//s += "\t\tSide: " + Type.Info().Side + ",\n";
 			//s += string.Join("", Enumerable.Repeat("\t", offset));
-			s += "\t\tOperator Type: " + Type.Info().Family + ",\n";
-			s += string.Join("", Enumerable.Repeat("\t", offset));
-			s += "\t\tPriority: " + Type.Info().Priority + ",\n";
-			s += string.Join("", Enumerable.Repeat("\t", offset));
+			//s += "\t\tOperator Type: " + Type.Info().Family + ",\n";
+			//s += string.Join("", Enumerable.Repeat("\t", offset));
+			//s += "\t\tPriority: " + Type.Info().Priority + ",\n";
+			//s += string.Join("", Enumerable.Repeat("\t", offset));
 			s += "\t\tPattern: " + Type.Info().Pattern + "\n";
 			s += string.Join("", Enumerable.Repeat("\t", offset));
 			s += "\t},\n";
 			s += string.Join("", Enumerable.Repeat("\t", offset));
 			s += "\tPosition{\n";
 			s += string.Join("", Enumerable.Repeat("\t", offset));
-			s += "\t\tIndex: " + Position.Index + ",\n";
+			s += "\t\tIndex: " + Position.Position + ",\n";
 			s += string.Join("", Enumerable.Repeat("\t", offset));
 			s += "\t\tLine: " + Position.Line + ",\n";
 			s += string.Join("", Enumerable.Repeat("\t", offset));
