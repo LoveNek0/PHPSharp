@@ -27,12 +27,15 @@ namespace PHP.Core.Lang
             TokenType.T_CURLY_BRACE_CLOSE,
 
             //  String operators
+            TokenType.T_USE,
             TokenType.T_ECHO,
             TokenType.T_WHILE,
             TokenType.T_FUNCTION,
             TokenType.T_RETURN,
             TokenType.T_FOR,
             TokenType.T_FOREACH,
+
+            TokenType.T_ELLIPSIS,
             
             //  Assignment
             TokenType.T_ASSIGNMENT,
@@ -136,6 +139,7 @@ namespace PHP.Core.Lang
                 if(token != null)
                     tokens.Add(token);
             }
+            tokens.Add(new TokenItem(TokenType.T_EOF, new TokenItem.TokenPosition(position, line, column), ""));
             return tokens.ToArray();
         }
 

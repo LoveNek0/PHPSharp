@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Lang.AST
+namespace PHP.Core.Lang
 {
     public class ASTBuilder
     {
@@ -36,38 +36,143 @@ namespace PHP.Core.Lang.AST
 
         public void Reset() => this.position = 0;
 
-        private TokenItem PeekToken()
+        private TokenItem Get(int offset = 0)
         {
-            if (position >= tokens.Count())
-                return null;
-            return tokens[position];
+            return position + offset >= tokens.Count() || position + offset < 0 ? null : tokens[position + offset];
         }
-        private TokenItem PeekToken(params TokenType[] expected)
-        {
-            TokenItem next = PeekToken();
-            if(expected.Contains(next.Type))
-                return next;
-            throw new SyntaxException("Unexpected token " + next.Type, next.Position.Position, next.Position.Line, next.Position.Column);
-        }
-
-        private TokenItem NextToken()
-        {
-            TokenItem next = PeekToken();
-            position++;
-            return next;
-        }
+        private bool Match(params TokenType[] expected) =>
+            expected.Length == 0 || expected.Contains(Get(0).Type);
         private TokenItem NextToken(params TokenType[] expected)
         {
-            TokenItem next = PeekToken(expected);
-            position++;
-            return next;
+            TokenItem item = Get(0);
+            if(item == null)
+                item = tokens[tokens.Length - 1];
+            if(expected.Length > 0 && !expected.Contains(item.Type))
+                throw new SyntaxException($"Unexpected token [{Get(0).Type}]", Get(0).Position);
+            this.position++;
+            return item;
         }
 
-        private TokenItem Get(int offset)
+        private ASTFunctionNode ParseFunction()
         {
-            if (position + offset >= tokens.Count() || position + offset < 0)
-                return null;
-            return tokens[position + offset];
+            position--;
+            TokenItem token = NextToken(TokenType.T_FUNCTION);
+            ASTFunctionNode node = new ASTFunctionNode(token);
+            TokenItem next = NextToken(TokenType.T_STRING, TokenType.T_BRACE_OPEN);
+            if (next.Type == TokenType.T_STRING)
+            {
+                node.Name = next;
+                NextToken(TokenType.T_BRACE_OPEN);
+            }
+            while (true)
+            {
+                TokenItem type = null;
+                TokenItem multi = null;
+                TokenItem pointer = null;
+                TokenItem name = null;
+                TokenItem defaultValue = null;
+                if (Match(TokenType.T_STRING))
+                    type = NextToken(TokenType.T_STRING);
+                if (Match(TokenType.T_ELLIPSIS))
+                    multi = NextToken(TokenType.T_ELLIPSIS);
+                if (Match(TokenType.T_BIT_AND))
+                    pointer = NextToken(TokenType.T_BIT_AND);
+                if (Match(TokenType.T_VARIABLE))
+                    name = NextToken(TokenType.T_VARIABLE);
+                //if (Match(TokenType.T_VARIABLE))
+                //    name = NextToken(TokenType.T_VARIABLE);
+                node.Arguments.Add(new ASTFunctionArgumentNode(type, multi, pointer, name, defaultValue));
+                if (Match(TokenType.T_BRACE_CLOSE))
+                    break;
+                NextToken(TokenType.T_COMMA, TokenType.T_BRACE_CLOSE);
+            }
+            NextToken(TokenType.T_BRACE_CLOSE);
+            if (Match(TokenType.T_USE))
+            {
+                NextToken(TokenType.T_USE);
+                NextToken(TokenType.T_BRACE_OPEN);
+                while (true)
+                {
+                    if (Match(TokenType.T_VARIABLE))
+                        node.Use.Add(NextToken(TokenType.T_VARIABLE));
+                    if (Match(TokenType.T_BRACE_CLOSE))
+                        break;
+                    NextToken(TokenType.T_COMMA, TokenType.T_BRACE_CLOSE);
+                }
+                NextToken(TokenType.T_BRACE_CLOSE);
+            }
+            NextToken(TokenType.T_CURLY_BRACE_OPEN);
+            next = Get();
+            while (next.Type != TokenType.T_CURLY_BRACE_CLOSE)
+            {
+                ASTNode n = NextNode();
+                if (n != null)
+                    node.Add(n);
+                next = Get();
+                continue;
+            }
+            NextToken(TokenType.T_CURLY_BRACE_CLOSE);
+            return node;
+        }
+
+        private ASTForNode ParseForLoop()
+        {
+            position--;
+            ASTForNode node = new ASTForNode(NextToken(TokenType.T_FOR));
+            NextToken(TokenType.T_BRACE_OPEN);
+            bool conEnd = false;
+            node.Initializer = NextNode(ref conEnd, 0, TokenType.T_SEMICOLON);
+            conEnd = false;
+            node.Condition = NextNode(ref conEnd, 0, TokenType.T_SEMICOLON);
+            conEnd = false;
+            node.Action = NextNode(ref conEnd, 0, TokenType.T_BRACE_CLOSE);
+
+            if (Get(0).Type == TokenType.T_CURLY_BRACE_OPEN)
+            {
+                NextToken(TokenType.T_CURLY_BRACE_OPEN);
+
+                TokenItem next = Get();
+                while (next.Type != TokenType.T_CURLY_BRACE_CLOSE)
+                {
+                    ASTNode n = NextNode();
+                    if (n != null)
+                        node.Add(n);
+                    next = Get();
+                    continue;
+                }
+                NextToken(TokenType.T_CURLY_BRACE_CLOSE);
+            }
+            else
+                node.Add(NextNode());
+            return node;
+        }
+        private ASTWhileNode ParseWhileLoop()
+        {
+            position--;
+            ASTWhileNode node = new ASTWhileNode(NextToken(TokenType.T_WHILE));
+
+            bool conEnd = false;
+            NextToken(TokenType.T_BRACE_OPEN);
+            node.condition = NextNode(ref conEnd, 0, TokenType.T_BRACE_CLOSE);
+
+            if (Get(0).Type == TokenType.T_CURLY_BRACE_OPEN)
+            {
+                NextToken(TokenType.T_CURLY_BRACE_OPEN);
+
+                TokenItem next = Get();
+                while (next.Type != TokenType.T_CURLY_BRACE_CLOSE)
+                {
+                    ASTNode n = NextNode();
+                    if (n != null)
+                        node.Add(n);
+                    next = Get();
+                    continue;
+                }
+                NextToken(TokenType.T_CURLY_BRACE_CLOSE);
+            }
+            else
+                node.Add(NextNode());
+            return node;
         }
 
         private ASTNode NextNode()
@@ -203,100 +308,24 @@ namespace PHP.Core.Lang.AST
                     {
                         ASTListNode node = new ASTListNode(token);
 
-                        TokenItem next = PeekToken();
+                        TokenItem next = Get(0);
                         while (next.Type != TokenType.T_CURLY_BRACE_CLOSE)
                         {
                             ASTNode n = NextNode();
                             //if (n != null)
                                 node.Add(n);
-                            next = PeekToken();
+                            next = Get(0);
                             continue;
                         }
                         NextToken(TokenType.T_CURLY_BRACE_CLOSE);
                         return node;
                     }
                 case TokenType.T_WHILE:
-                    {
-                        ASTWhileNode node = new ASTWhileNode(token);
-
-                        bool conEnd = false;
-                        NextToken(TokenType.T_BRACE_OPEN);
-                        node.condition = NextNode(ref conEnd, 0, TokenType.T_BRACE_CLOSE);
-
-                        if (Get(0).Type == TokenType.T_CURLY_BRACE_OPEN)
-                        {
-                            NextToken(TokenType.T_CURLY_BRACE_OPEN);
-
-                            TokenItem next = PeekToken();
-                            while (next.Type != TokenType.T_CURLY_BRACE_CLOSE)
-                            {
-                                ASTNode n = NextNode();
-                                if (n != null)
-                                    node.Add(n);
-                                next = PeekToken();
-                                continue;
-                            }
-                            NextToken(TokenType.T_CURLY_BRACE_CLOSE);
-                        }
-                        else
-                            node.Add(NextNode());
-                        return node;
-                    }
+                    return ParseWhileLoop();
                 case TokenType.T_FOR:
-                    {
-                        ASTForNode node = new ASTForNode(token);
-
-                        NextToken(TokenType.T_BRACE_OPEN);
-                        bool conEnd = false;
-                        node.Initializer = NextNode(ref conEnd, 0, TokenType.T_SEMICOLON);
-                        conEnd = false;
-                        node.Condition = NextNode(ref conEnd, 0, TokenType.T_SEMICOLON);
-                        conEnd = false;
-                        node.Action = NextNode(ref conEnd, 0, TokenType.T_BRACE_CLOSE);
-
-                        if (Get(0).Type == TokenType.T_CURLY_BRACE_OPEN)
-                        {
-                            NextToken(TokenType.T_CURLY_BRACE_OPEN);
-
-                            TokenItem next = PeekToken();
-                            while (next.Type != TokenType.T_CURLY_BRACE_CLOSE)
-                            {
-                                ASTNode n = NextNode();
-                                if (n != null)
-                                    node.Add(n);
-                                next = PeekToken();
-                                continue;
-                            }
-                            NextToken(TokenType.T_CURLY_BRACE_CLOSE);
-                        }
-                        else
-                            node.Add(NextNode());
-                        return node;
-                    }
+                    return ParseForLoop();
                 case TokenType.T_FUNCTION:
-                    {
-                        ASTFunctionNode node = new ASTFunctionNode(token);
-                        TokenItem next = NextToken(TokenType.T_STRING, TokenType.T_BRACE_OPEN);
-                        if (next.Type == TokenType.T_STRING)
-                        {
-                            node.Name = next;
-                            NextToken(TokenType.T_BRACE_OPEN);
-                        }
-                        // TODO: params parser
-                        NextToken(TokenType.T_BRACE_CLOSE);
-                        NextToken(TokenType.T_CURLY_BRACE_OPEN);
-                        next = PeekToken();
-                        while (next.Type != TokenType.T_CURLY_BRACE_CLOSE)
-                        {
-                            ASTNode n = NextNode();
-                            if (n != null)
-                                node.Add(n);
-                            next = PeekToken();
-                            continue;
-                        }
-                        NextToken(TokenType.T_CURLY_BRACE_CLOSE);
-                        return node;
-                    }
+                    return ParseFunction();
             }
 
             throw new SyntaxException($"Incorrect token {token.Type}", token.Position);
@@ -305,7 +334,7 @@ namespace PHP.Core.Lang.AST
         public ASTRootNode Build()
         {
             ASTRootNode node = new ASTRootNode();
-            while(position < tokens.Length)
+            while(Get(0).Type != TokenType.T_EOF)
             {
                 ASTNode next = NextNode();
                 if (next != null)

@@ -24,7 +24,7 @@ namespace PHP.Core.Lang.AST.Nodes
             private set => right = value;
         }
 
-        public ASTBinaryNode(TokenItem token, uint deep, ASTNode left = null, ASTNode right = null) : base(token)
+        public ASTBinaryNode(TokenItem token, uint deep = 0, ASTNode left = null, ASTNode right = null) : base(token)
         {
             this.deep = deep;
             this.left = left;

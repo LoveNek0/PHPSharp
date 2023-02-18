@@ -8,6 +8,8 @@ namespace PHP.Core.Lang.Token
 {
     public enum TokenType
     {
+        T_EOF,
+
         //  Arithmetic Operator
         T_ADD,                      //  +
         T_SUB,                      //  -

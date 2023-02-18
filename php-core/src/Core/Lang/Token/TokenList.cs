@@ -443,7 +443,26 @@ namespace PHP.Core.Lang.Token
                     TokenType.T_SEMICOLON
                 }
             ),
+            new TokenInfo(
+                TokenType.T_EOF,
+                "",
+                new TokenType[] {}
+            ),
 
+            new TokenInfo(
+                TokenType.T_ELLIPSIS,
+                @"[.][.][.]",
+                new TokenType[]{
+                    TokenType.T_VARIABLE
+                }
+            ),
+            new TokenInfo(
+                TokenType.T_USE,
+                @"[Uu][Ss][Ee]",
+                new TokenType[]{
+                    TokenType.T_BRACE_OPEN
+                }
+            ),
             
             /*
                 TokenInfoList.Add(new TokenInfo(TokenType.T_CONSTANT_ENCAPSED_STRING, TokenSide.Left, TokenFamily.Data, 0, "\\\"([\\S\\s]*?)\\\"|\\'([\\S\\s]*?)\\'", new TokenType[] {
