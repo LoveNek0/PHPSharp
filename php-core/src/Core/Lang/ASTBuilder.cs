@@ -114,7 +114,6 @@ namespace PHP.Core.Lang
             NextToken(TokenType.T_CURLY_BRACE_CLOSE);
             return node;
         }
-
         private ASTForNode ParseForLoop()
         {
             position--;
@@ -173,6 +172,66 @@ namespace PHP.Core.Lang
             else
                 node.Add(NextNode());
             return node;
+        }
+        private ASTNode ParseExpression(ASTNode prev = null, uint deep = 0)
+        {
+            switch (Get(0).Type)
+            {
+                case TokenType.T_SEMICOLON:
+                    return prev;
+                case TokenType.T_ADD:
+                case TokenType.T_SUB:
+                    {
+                        ASTBinaryNode node = new ASTBinaryNode(NextToken(), deep);
+                        node.left = prev;
+                        node.right = ParseExpression(node);
+                        return ParseExpression(node);
+                    }
+                case TokenType.T_MUL:
+                case TokenType.T_DIV:
+                case TokenType.T_MOD:
+                case TokenType.T_POW:
+                case TokenType.T_CONCAT:
+                    {
+                        ASTBinaryNode node = new ASTBinaryNode(NextToken(), deep);
+                        if (prev != null)
+                            switch (prev.Token.Type)
+                            {
+                                case TokenType.T_ADD:
+                                case TokenType.T_SUB:
+                                    if (((ASTBinaryNode)prev).deep == deep)
+                                    {
+                                        node.left = ((ASTBinaryNode)prev).right;
+                                        ((ASTBinaryNode)prev).right = node;
+                                        node.right = ParseExpression(node, deep);
+                                        return ParseExpression(prev, deep);
+                                    }
+                                    break;
+                            }
+                        node.left = prev;
+                        node.right = ParseExpression(deep, endTokenType, node);
+                        return ParseExpression(ref eol, deep, endTokenType, node);
+                    }
+            }
+            return null;
+        }
+        private ASTDataNode ParseData(ASTNode prev)
+        {
+            TokenItem token = NextToken(TokenType.T_LNUMBER, TokenType.T_DNUMBER, TokenType.T_VARIABLE);
+            ASTDataNode node = new ASTDataNode(token);
+            if (prev != null)
+                switch (prev.Token.Type)
+                {
+                    case TokenType.T_ADD:
+                    case TokenType.T_SUB:
+                    case TokenType.T_MUL:
+                    case TokenType.T_DIV:
+                    case TokenType.T_MOD:
+                    case TokenType.T_POW:
+                    case TokenType.T_CONCAT:
+                        return node;
+                }
+            return ParseExpression(node);
         }
 
         private ASTNode NextNode()
