@@ -1,6 +1,7 @@
 out
 bin
-
+.idea
+packages
 
 .vs
 obj

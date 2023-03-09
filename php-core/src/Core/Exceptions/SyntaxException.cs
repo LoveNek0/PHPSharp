@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static PHP.Core.Lang.Token.TokenItem;
 
 namespace PHP.Core.Exceptions
 {
@@ -13,7 +12,6 @@ namespace PHP.Core.Exceptions
         public readonly int line;
         public readonly int column;
 
-        public SyntaxException(string message, TokenPosition position) : this(message, position.Position, position.Line, position.Column) { }
         public SyntaxException(string message, int position, int line, int column) :
             base("Syntax error: " + message + " on line " + line + " column " + column)
         {
