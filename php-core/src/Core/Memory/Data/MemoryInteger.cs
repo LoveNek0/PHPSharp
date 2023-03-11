@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,8 +37,9 @@ namespace PHP.Core.Memory.Data
 
         public override MemoryBoolean ToMemoryBoolean() => new MemoryBoolean(ToBool());
         public override MemoryInteger ToMemoryInteger() => this;
+        public override MemoryFloat ToMemoryFloat() => new MemoryFloat(ToDecimal());
         public override MemoryString ToMemoryString() => new MemoryString(value.ToString());
-        public override MemoryArray ToMemoryArray() => new MemoryArray(Clone());
+        public override MemoryArray ToMemoryArray() => new MemoryArray(this);
 
         public override bool ToBool() => value != 0;
         public override short ToShort() => value;

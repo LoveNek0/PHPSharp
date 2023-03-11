@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +26,7 @@ namespace PHP.Core.Memory.Data
 
         public abstract MemoryBoolean ToMemoryBoolean();
         public abstract MemoryInteger ToMemoryInteger();
+        public abstract MemoryFloat ToMemoryFloat();
         public abstract MemoryString ToMemoryString();
         public abstract MemoryArray ToMemoryArray();
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +9,7 @@ namespace PHP.Core.Memory.Data
     public class MemoryArray : MemoryData
     {
         private Dictionary<MemoryData, MemoryData> values = new Dictionary<MemoryData, MemoryData>();
+        public MemoryArray() : base(DataType.Array) { }
         public MemoryArray(params MemoryData[] values) : base(DataType.Array)
         {
             foreach (var value in values)
@@ -20,18 +21,36 @@ namespace PHP.Core.Memory.Data
                 Set(value.Key, value.Value);
         }
 
-        public MemoryData Get(MemoryData key)
-        {
-            return null;
-        }
-        public void Set(MemoryData key, MemoryData value)
-        {
+        public MemoryData Get(MemoryData key) => values.TryGetValue(key, out var value) ? value : null;
+        public void Set(MemoryData key, MemoryData value) => values.Add(key, value);
+        public void Add(MemoryData value) => values.Add(new MemoryInteger(values.Count()), value);
+        public long Size() => values.Count();
 
+        public override bool Equals(MemoryData data)
+        {
+            if (this.Type != data.Type)
+                return false;
+            MemoryArray array = data.ToMemoryArray();
+            if (array.Size() != this.Size())
+                return false;
+            var a = this.values.ToArray();
+            var b = array.values.ToArray();
+            for (long i = 0; i < a.Length; i++)
+                if (!a[i].Key.Equals(b[i].Key) || !a[i].Value.Equals(b[i].Value))
+                    return false;
+            return true;
         }
-        public void Add(MemoryData value) => values.Add(new MemoryInteger(values.Count()), value.Clone());
-
+        public override MemoryData Clone()
+        {
+            MemoryArray clone = new MemoryArray();
+            foreach (var v in values)
+                clone.Set(v.Key.Clone(), v.Value.Clone());
+            return Clone();
+        }
+        
         public override MemoryBoolean ToMemoryBoolean() => new MemoryBoolean(ToBool());
         public override MemoryInteger ToMemoryInteger() => new MemoryInteger(ToLong());
+        public override MemoryFloat ToMemoryFloat() => new MemoryFloat(ToDecimal());
         public override MemoryString ToMemoryString() => new MemoryString(ToString());
         public override MemoryArray ToMemoryArray() => this;
 
@@ -45,5 +64,21 @@ namespace PHP.Core.Memory.Data
         public override string ToString() => values.Count == 0 ? "" : values.First().Value.ToString();
         public override IReadOnlyDictionary<MemoryData, MemoryData> ToDictionary() => values;
 
+
+
+        public override float ToFloat()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override double ToDouble()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override decimal ToDecimal()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
