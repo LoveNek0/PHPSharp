@@ -1,12 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHPSharp.src.Core.Memory.Data
+namespace PHP.Runtime.Lang
 {
-    internal class MemoryObject
+    public class Environment
     {
     }
 }

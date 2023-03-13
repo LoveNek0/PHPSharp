@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Memory.Data
+namespace PHP.Runtime.Memory.Data
 {
     public class MemoryInteger : MemoryData
     {
@@ -34,6 +34,7 @@ namespace PHP.Core.Memory.Data
             }
             return false;
         }
+        public override int GetHashCode() => this.value.GetHashCode();
 
         public override MemoryBoolean ToMemoryBoolean() => new MemoryBoolean(ToBool());
         public override MemoryInteger ToMemoryInteger() => this;

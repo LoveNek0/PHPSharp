@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Memory.Data
+namespace PHP.Runtime.Memory.Data
 {
     public class MemoryArray : MemoryData
     {
@@ -47,7 +47,8 @@ namespace PHP.Core.Memory.Data
                 clone.Set(v.Key.Clone(), v.Value.Clone());
             return Clone();
         }
-        
+        public override int GetHashCode() => this.values.GetHashCode();
+
         public override MemoryBoolean ToMemoryBoolean() => new MemoryBoolean(ToBool());
         public override MemoryInteger ToMemoryInteger() => new MemoryInteger(ToLong());
         public override MemoryFloat ToMemoryFloat() => new MemoryFloat(ToDecimal());
@@ -61,24 +62,10 @@ namespace PHP.Core.Memory.Data
         public override uint ToUInt() => values.Count == 0 ? 0 : values.First().Value.ToUInt();
         public override long ToLong() => values.Count == 0 ? 0 : values.First().Value.ToLong();
         public override ulong ToULong()=> values.Count == 0 ? 0 : values.First().Value.ToULong();
+        public override float ToFloat() => values.Count == 0 ? 0 : values.First().Value.ToInt();
+        public override double ToDouble() => values.Count == 0 ? 0 : values.First().Value.ToInt();
+        public override decimal ToDecimal() => values.Count == 0 ? 0 : values.First().Value.ToInt();
         public override string ToString() => values.Count == 0 ? "" : values.First().Value.ToString();
         public override IReadOnlyDictionary<MemoryData, MemoryData> ToDictionary() => values;
-
-
-
-        public override float ToFloat()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override double ToDouble()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override decimal ToDecimal()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

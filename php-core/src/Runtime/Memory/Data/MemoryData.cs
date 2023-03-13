@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Memory.Data
+namespace PHP.Runtime.Memory.Data
 {
     public abstract class MemoryData
     {
@@ -19,10 +19,20 @@ namespace PHP.Core.Memory.Data
         }
         public readonly DataType Type;
 
+        public override bool Equals(object obj)
+        {
+            if(obj == null)
+                return false;
+            if(!(obj is MemoryData))
+                return false;
+            return this.Equals(obj as MemoryData);
+        }
+
         protected MemoryData(DataType type) => Type = type;
 
         public abstract MemoryData Clone();
         public abstract bool Equals(MemoryData data);
+        public abstract override int GetHashCode();
 
         public abstract MemoryBoolean ToMemoryBoolean();
         public abstract MemoryInteger ToMemoryInteger();

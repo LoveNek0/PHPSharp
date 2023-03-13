@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Memory.Data
+namespace PHP.Runtime.Memory.Data
 {
     public class MemoryBoolean : MemoryData
     {
@@ -13,6 +13,7 @@ namespace PHP.Core.Memory.Data
 
         public override MemoryData Clone() => new MemoryBoolean(this.value);
         public override bool Equals(MemoryData data) => value == data.ToBool();
+        public override int GetHashCode() => value.GetHashCode();
 
         public override MemoryBoolean ToMemoryBoolean() => this;
         public override MemoryInteger ToMemoryInteger() => new MemoryInteger(ToLong());

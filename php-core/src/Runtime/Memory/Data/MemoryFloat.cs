@@ -4,17 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Memory.Data
+namespace PHP.Runtime.Memory.Data
 {
     public class MemoryFloat : MemoryData
     {
         private dynamic value;
         public MemoryFloat(float value) : base(DataType.Float) => this.value = value;
-        public MemoryFloat(double value) : base(DataType.Float) => this.value = value;
-        public MemoryFloat(decimal value) : base(DataType.Float) => this.value = value;
+        public MemoryFloat(double value) : base(DataType.Float)
+        {
+            if (value >= float.MinValue && value <= float.MaxValue)
+                this.value = (float)value;
+            else
+                this.value = value;
+        }
+        public MemoryFloat(decimal value) : base(DataType.Float)
+        {
+            if (value >= Convert.ToDecimal(float.MinValue) && value <= Convert.ToDecimal(float.MaxValue))
+                this.value = (float)value;
+            else
+                this.value = Convert.ToDecimal(value);
+        }
 
         public override bool Equals(MemoryData data) => this.ToDecimal() == data.ToDecimal();
         public override MemoryData Clone() => new MemoryFloat(this.value);
+        public override int GetHashCode() => this.value.GetHashCode();
 
         public override MemoryBoolean ToMemoryBoolean() => new MemoryBoolean(ToBool());
         public override MemoryInteger ToMemoryInteger() => new MemoryInteger(ToLong());
