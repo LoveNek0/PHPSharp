@@ -11,6 +11,8 @@ namespace PHP.Core.Lang.Tokens
     {
         private static Dictionary<TokenType, string> patterns = new Dictionary<TokenType, string>()
         {
+            { TokenType.T_COMMENT,                  @"((\/\/(.|\w)*)|((\/\*)[\w\W\s\S]*(\*\/)))" },
+
             { TokenType.T_WHILE,                    @"[Ww][Hh][Ii][Ll][Ee]" },
             { TokenType.T_FOR,                      @"[Ff][Oo][Rr]" },
             { TokenType.T_FOREACH,                  @"[Ff][Oo][Rr][Ee][Aa][Cc][Hh]" },
@@ -19,10 +21,22 @@ namespace PHP.Core.Lang.Tokens
             { TokenType.T_RETURN,                   @"[Rr][Ee][Tt][Uu][Rr][Nn]" },
             { TokenType.T_USE,                      @"[Uu][Ss][Ee]" },
 
+            { TokenType.T_BOOL_CAST,                @"[(][Bb][Oo][Oo][Ll][)]" },
+            { TokenType.T_INT_CAST,                 @"[(][Ii][Nn][Tt][)]" },
+            { TokenType.T_DOUBLE_CAST,              @"[(]([Dd][Oo][Uu][Bb][Ll][Ee])|([Ff][Ll][Oo][Aa][Tt])|([Rr][Ee][Aa][Ll])[)]" },
+            { TokenType.T_STRING_CAST,              @"[(][Ss][Tt][Rr][Ii][Nn][Gg][)]" },
+            { TokenType.T_ARRAY_CAST,               @"[(][Aa][Rr][Rr][Aa][Yy][)]" },
+            { TokenType.T_OBJECT_CAST,              @"[(][Oo][Bb][Jj][Ee][Cc][Tt][)]" },
+            { TokenType.T_UNSET_CAST,               @"[(][Uu][Nn][Ss][Ee][Tt][)]" },
+            { TokenType.T_CUSTOM_TYPE_CAST,         @"[(]([A-Za-z_][A-Za-z0-9_]*)[)]" },
+
             { TokenType.T_CURLY_BRACE_OPEN,         @"[{]" },
             { TokenType.T_CURLY_BRACE_CLOSE,        @"[}]" },
             { TokenType.T_BRACE_OPEN,               @"[(]" },
             { TokenType.T_BRACE_CLOSE,              @"[)]" },
+
+            { TokenType.T_OBJECT_OPERATOR,          @"[-][>]" },
+            { TokenType.T_NULLSAFE_OBJECT_OPERATOR, @"[?][-][>]" },
 
             { TokenType.T_INCREMENT,                @"[+][+]" },
             { TokenType.T_DECREMENT,                @"[-][-]" },

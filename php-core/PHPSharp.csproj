@@ -141,6 +141,7 @@
     <Compile Include="src\Core\Lang\AST\ASTData.cs" />
     <Compile Include="src\Core\Lang\AST\ASTFunction.cs" />
     <Compile Include="src\Core\Lang\AST\ASTFunctionArgument.cs" />
+    <Compile Include="src\Core\Lang\AST\ASTLambda.cs" />
     <Compile Include="src\Core\Lang\AST\ASTNode.cs" />
     <Compile Include="src\Core\Lang\AST\ASTRoot.cs" />
     <Compile Include="src\Core\Lang\AST\ASTUnary.cs" />

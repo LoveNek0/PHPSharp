@@ -81,12 +81,14 @@ namespace PHP.Core.Lang
         };
         private readonly TokenType[] lineStart =
         {
-            TokenType.T_VARIABLE
+            TokenType.T_VARIABLE,
+            TokenType.T_FUNCTION
         };
         private readonly TokenType[] variables =
         {
             TokenType.T_VARIABLE
         };
+        private readonly uint maxPriority = 5;
 
         private TokenItem[] tokens;
         private int index;
@@ -110,6 +112,10 @@ namespace PHP.Core.Lang
                 case TokenType.T_POW:
                 case TokenType.T_MOD:
                     return 3;
+                case TokenType.T_OBJECT_OPERATOR:
+                    return 4;
+                case TokenType.T_DOUBLE_COLON:
+                    return 5;
                 default:
                     return 0;
             }
@@ -201,15 +207,134 @@ namespace PHP.Core.Lang
 
         public ASTNode ParseLine()
         {
-            return null;
+            switch (Get(lineStart).Type)
+            {
+                case TokenType.T_FUNCTION:
+                    return ParseFunction();
+                default:
+                    {
+                        bool eol = false;
+                        return ParseExpression(ref eol, 0, 0, null, TokenType.T_SEMICOLON);
+                    }
+            }
         }
+        public List<TokenItem> RPN()
+        {
+            Stack<TokenItem> stack = new Stack<TokenItem>();
+            List<TokenItem> result = new List<TokenItem>();
 
-        public ASTFunction ParseFunction()
+            while(true)
+            {
+                TokenItem token = NextToken();
+                if (token.Type == TokenType.T_SEMICOLON)
+                    break;
+                if (data.Contains(token.Type))
+                    result.Add(token);
+                if (token.Type == TokenType.T_BRACE_OPEN)
+                    stack.Push(token);
+                if(token.Type == TokenType.T_BRACE_CLOSE)
+                {
+                    while (stack.Count() > 0 && stack.Peek().Type != TokenType.T_BRACE_OPEN)
+                        result.Add(stack.Pop());
+                    stack.Pop();
+                }
+                if (binaryOperators.Contains(token.Type))
+                {
+                    while ((stack.Count() > 0 && binaryOperators.Contains(stack.Peek().Type))
+                        &&
+                        (
+                            (GetPriority(token.Type) <= GetPriority(stack.Peek().Type))
+                            ||
+                            (
+                                leftAssociative.Contains(stack.Peek().Type)
+                                &&
+                                GetPriority(token.Type) == GetPriority(stack.Peek().Type)
+                            )
+                        )
+                    )
+                        result.Add(stack.Pop());
+                    stack.Push(token);
+                }
+            }
+            while(stack.Count() > 0)
+                result.Add(stack.Pop());
+            return result;
+        }
+        public ASTNode ParseExpression(ref bool eol, uint nowdeep, uint prevdeep, ASTNode prev, TokenType eolt)
+        {
+            if (eol)
+                return prev;
+            if (Match(eolt))
+            {
+                NextToken(eolt);
+                eol = true;
+                return prev;
+            }
+            if (Match(data))
+            {
+                ASTNode node = ParseData();
+                if (prev != null && leftAssociative.Contains(prev.Token.Type))
+                    return node;
+                return ParseExpression(ref eol, nowdeep, prevdeep, node, eolt);
+            }
+            if (Match(binaryOperators))
+            {
+                ASTBinary node = ParseBinary() as ASTBinary;
+                node._left = prev;
+                node._right = ParseExpression(ref eol, nowdeep, nowdeep, node, eolt);
+                if (prev != null)
+                {
+                    if (binaryOperators.Contains(prev.Token.Type))
+                        if(nowdeep == prevdeep)
+                            if (GetPriority(prev.Token.Type) < GetPriority(node.Token.Type))
+                            {
+                                node._left = ((ASTBinary)prev)._right;
+                                ((ASTBinary)prev)._right = node;
+                                return ParseExpression(ref eol, nowdeep, nowdeep, prev, eolt);
+                            }
+                }
+                if (leftAssociative.Contains(node.Token.Type))
+                    return ParseExpression(ref eol, nowdeep, nowdeep, node, eolt);
+                if (rightAssociative.Contains(node.Token.Type))
+                    return node;
+            }
+            if (Match(TokenType.T_BRACE_OPEN))
+            {
+                NextToken(TokenType.T_BRACE_OPEN);
+                bool e = false;
+                ASTNode node = ParseExpression(ref e, nowdeep + 1, nowdeep, null, TokenType.T_BRACE_CLOSE);
+                if (prev != null && leftAssociative.Contains(prev.Token.Type))
+                    return node;
+                return ParseExpression(ref eol, nowdeep, nowdeep + 1, node, eolt);
+            }
+            TokenItem nowToken = Get();
+            throw new SyntaxException($"Unexpected token \"{nowToken.Type}\"", nowToken.Position);
+        }
+        public ASTNode ParseData()
+        {
+            return new ASTData(NextToken(data));
+        }
+        public ASTNode ParseBinary()
+        {
+            return new ASTBinary(NextToken(binaryOperators));
+        }
+        public ASTNode ParseVariable()
+        {
+            ASTNode node = new ASTData(NextToken(TokenType.T_VARIABLE));
+            while (Match(TokenType.T_OBJECT_OPERATOR))
+            {
+                ASTBinary binary = new ASTBinary(NextToken(TokenType.T_OBJECT_OPERATOR));
+                binary._left = node;
+                binary._right = new ASTData(NextToken(TokenType.T_STRING));
+                node = binary;
+            }
+            return node;
+        }
+        public ASTNode ParseFunction()
         {
             TokenItem token = NextToken(TokenType.T_FUNCTION);
             ASTFunction func = new ASTFunction(token);
-            if (Match(TokenType.T_STRING))
-                func._name = NextToken(TokenType.T_STRING);
+            func._name = NextToken(TokenType.T_STRING);
             NextToken(TokenType.T_BRACE_OPEN);
             while (true)
             {
@@ -237,7 +362,58 @@ namespace PHP.Core.Lang
                     NextToken(TokenType.T_CURLY_BRACE_CLOSE);
                     break;
                 }
-                block._lines.Add(ParseLine());
+                //block._lines.Add(ParseLine());
+            }
+            func._block = block;
+            return func;
+        }
+        public ASTNode ParseLambda()
+        {
+            TokenItem token = NextToken(TokenType.T_FUNCTION);
+            ASTLambda func = new ASTLambda(token);
+            NextToken(TokenType.T_BRACE_OPEN);
+            while (true)
+            {
+                if (Match(TokenType.T_COMMA))
+                    NextToken(TokenType.T_COMMA);
+                else
+                    if (Match(TokenType.T_BRACE_CLOSE))
+                {
+                    NextToken(TokenType.T_BRACE_CLOSE);
+                    break;
+                }
+                TokenItem type = null;
+                if (Match(TokenType.T_STRING))
+                    type = NextToken(TokenType.T_STRING);
+                token = NextToken(TokenType.T_VARIABLE);
+                ASTFunctionArgument argument = new ASTFunctionArgument(token);
+                argument._type = type;
+                func._arguments.Add(argument);
+            }
+            if (Match(TokenType.T_USE))
+            {
+                NextToken(TokenType.T_USE);
+                NextToken(TokenType.T_BRACE_OPEN);
+                while (true)
+                {
+                    if (Match(TokenType.T_COMMA))
+                        NextToken(TokenType.T_COMMA);
+                    else
+                        if (Match(TokenType.T_BRACE_CLOSE))
+                            break;
+                    func._use.Add(NextToken(TokenType.T_VARIABLE));
+                }
+                NextToken(TokenType.T_BRACE_CLOSE);
+            }
+            ASTBlock block = new ASTBlock(NextToken(TokenType.T_CURLY_BRACE_OPEN));
+            while (true)
+            {
+                if (Match(TokenType.T_CURLY_BRACE_CLOSE))
+                {
+                    NextToken(TokenType.T_CURLY_BRACE_CLOSE);
+                    break;
+                }
+                //block._lines.Add(ParseLine());
             }
             func._block = block;
             return func;

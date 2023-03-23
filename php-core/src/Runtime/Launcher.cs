@@ -15,10 +15,12 @@ namespace PHP.Runtime
         public static void Main(string[] args)
         {
             Lexer lexer = new Lexer(File.ReadAllText(@"D:\Projects\CSharp\PHPSharp\php-core\test\e1.php"));
-            foreach (var i in lexer.Tokenize())
-                Console.WriteLine(i);
+            //foreach (var i in lexer.Tokenize())
+              //  Console.WriteLine(i);
             Parser parser = new Parser(lexer.Tokenize());
-            Console.WriteLine(parser.ParseFunction());
+            foreach (var i in parser.RPN())
+                Console.Write(i.Data + " ");
+            Console.WriteLine();
             Console.WriteLine("End.");
             Console.ReadKey();
         }
