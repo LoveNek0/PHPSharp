@@ -14,15 +14,20 @@ namespace PHP.Runtime
 {
     public class Launcher
     {
+        private static void Test(string file)
+        {
+            string path = @"D:\Projects\CSharp\PHPSharp\php-core\tests\" + file;
+            Console.WriteLine($"Testing > {file}");
+            Console.WriteLine(ASTBuilder.BuildFromFile(path));
+            Console.WriteLine($"End for > {file}");
+        }
         public static void Main(string[] args)
         {
-            string code = File.ReadAllText(@"D:\Projects\CSharp\PHPSharp\php-core\test\e1.php");
-            Lexer lexer = new Lexer(code);
-            TokenItem[] tokens = lexer.Tokenize();
-            Parser parser = new Parser(tokens);
-            ASTRoot root = parser.Parse();
-            Console.WriteLine(root);
-            Console.WriteLine();
+            Test("test_1.php");
+            //Test("dowhile.php");
+            //Test("for.php");
+            //Test("foreach.php");
+            Console.ReadKey();
             Console.WriteLine("End.");
         }
     }

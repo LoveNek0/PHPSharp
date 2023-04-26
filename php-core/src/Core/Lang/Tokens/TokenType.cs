@@ -82,7 +82,7 @@ namespace PHP.Core.Lang.Tokens
         //  Data
         T_LNUMBER,                  //  123 012 0x1ac
         T_DNUMBER,                  //  1.5
-        T_CONSTANT_ENCAPSED_STRING, //  "" ''
+        T_STRING, //  "" ''
         T_STATIC_STRING,                   //  parent self T_CONSTANT_ENCAPSED_STRING
 
         //  Variable

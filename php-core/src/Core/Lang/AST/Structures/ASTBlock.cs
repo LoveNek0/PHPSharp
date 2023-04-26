@@ -15,6 +15,6 @@ namespace PHP.Core.Lang.AST
         {
         }
 
-        public override string ToString() => $"{{\n{String.Join(";\n ", _lines)}\n}}";
+        public override string ToString() => $"{{\n{String.Join("\n", _lines)}\n}}";
     }
 }

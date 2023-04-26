@@ -15,4 +15,7 @@ public class ASTFor : ASTBlock
     internal ASTFor(TokenItem token) : base(token)
     {
     }
+
+    public override string ToString() =>
+        $"for({(_initialAction == null ? "" : _initialAction)};{(_condition == null ? "" : _condition)};{(_postAction == null ? "" : _postAction)}){base.ToString()}";
 }

@@ -14,7 +14,7 @@ using PHP.Core.Lang.AST.Structures.Loops;
 
 namespace PHP.Core.Lang
 {
-    public class Parser
+    public class ASTBuilder
     {
         private static readonly TokenType[] ignoreTokenTypes =
         {
@@ -27,7 +27,16 @@ namespace PHP.Core.Lang
         private TokenItem[] tokens;
         private int index;
 
-        public Parser(TokenItem[] tokens)
+        public static ASTRoot Build(string code)
+        {
+            Tokenizer tokenizer = new Tokenizer(code);
+            ASTBuilder astBuilder = new ASTBuilder(tokenizer.Tokenize());
+            return astBuilder.Build();
+        }
+
+        public static ASTRoot BuildFromFile(string path) => Build(File.ReadAllText(path));
+        
+        public ASTBuilder(TokenItem[] tokens)
         {
             this.tokens = (from TokenItem item in tokens where !ignoreTokenTypes.Contains(item.Type) select item)
                 .ToArray();
@@ -65,7 +74,7 @@ namespace PHP.Core.Lang
 
         private bool IsMatch(params TokenType[] expected) => IsMatch(0, expected);
 
-        public ASTRoot Parse()
+        public ASTRoot Build()
         {
             ASTRoot root = new ASTRoot();
             while (!IsMatch(TokenType.T_EOF))
@@ -97,6 +106,8 @@ namespace PHP.Core.Lang
                 return ParseDoWhile();
             if (IsMatch(TokenType.T_FOR))
                 return ParseFor();
+            if (IsMatch(TokenType.T_FOREACH))
+                return ParseForeach();
             
             if (IsMatch(TokenType.T_FUNCTION))
                 return ParseFunction();
@@ -276,7 +287,8 @@ namespace PHP.Core.Lang
         }
         private ASTNode ParseAssignment()
         {
-            var left = IsMatch(TokenType.T_VARIABLE, TokenType.T_STATIC_STRING) ? ParseObjectOperator() : ParseAddition();
+            ASTNode left = ParseLogical();
+
             if (IsMatch(
                     TokenType.T_ASSIGNMENT,
                     TokenType.T_ADD_ASSIGNMENT,
@@ -288,9 +300,94 @@ namespace PHP.Core.Lang
                     TokenType.T_CONCAT_ASSIGNMENT))
             {
                 TokenItem token = NextToken();
-                ASTNode right = ParseAssignment();
-                return new ASTBinary(token, left, right);
+
+                if (left.Token.Type == TokenType.T_VARIABLE ||
+                    left.Token.Type == TokenType.T_OBJECT_OPERATOR ||
+                    left.Token.Type == TokenType.T_DOUBLE_COLON)
+                {
+                    ASTNode right = ParseAssignment();
+                    left = new ASTBinary(token, left, right);
+                }
+                else
+                    throw new SyntaxException("Unexpected token before assignment operator", token);
             }
+            else if (IsMatch(
+                         TokenType.T_IS_EQUAL,
+                         TokenType.T_IS_NOT_EQUAL,
+                         TokenType.T_IS_SMALLER,
+                         TokenType.T_IS_SMALLER_OR_EQUAL,
+                         TokenType.T_IS_GREATER,
+                         TokenType.T_IS_GREATER_OR_EQUAL))
+            {
+                TokenItem token = NextToken();
+                ASTNode right = ParseComparison();
+                left = new ASTBinary(token, left, right);
+            }
+            else if (IsMatch(
+                         TokenType.T_BIT_AND,
+                         TokenType.T_LOGICAL_OR,
+                         TokenType.T_BIT_XOR,
+                         TokenType.T_BIT_NOT,
+                         TokenType.T_BIT_SHIFT_LEFT,
+                         TokenType.T_BIT_SHIFT_RIGHT))
+            {
+                TokenItem token = NextToken();
+                ASTNode right = ParseBitwise();
+                left = new ASTBinary(token, left, right);
+            }
+
+
+            return left;
+        }
+        private ASTNode ParseLogical()
+        {
+            ASTNode left = ParseBitwise();
+
+            while (IsMatch(TokenType.T_LOGICAL_AND, TokenType.T_LOGICAL_OR, TokenType.T_LOGICAL_XOR))
+            {
+                TokenItem token = NextToken();
+                ASTNode right = ParseBitwise();
+                left = new ASTBinary(token, left, right);
+            }
+
+            return left;
+        }
+        private ASTNode ParseBitwise()
+        {
+            ASTNode left = ParseComparison();
+
+            if (IsMatch(
+                    TokenType.T_BIT_AND,
+                    TokenType.T_BIT_XOR,
+                    TokenType.T_BIT_NOT,
+                    TokenType.T_BIT_SHIFT_LEFT,
+                    TokenType.T_BIT_SHIFT_RIGHT))
+            {
+                TokenItem token = NextToken();
+                ASTNode right = ParseBitwise();
+                left = new ASTBinary(token, left, right);
+            }
+
+            return left;
+        }
+
+        private ASTNode ParseComparison()
+        {
+            ASTNode left = ParseAddition();
+            if (IsMatch(
+                    TokenType.T_IS_EQUAL,
+                    TokenType.T_IS_NOT_EQUAL,
+                    TokenType.T_IS_SMALLER,
+                    TokenType.T_IS_SMALLER_OR_EQUAL,
+                    TokenType.T_IS_GREATER,
+                    TokenType.T_IS_GREATER_OR_EQUAL
+                ))
+            {
+                TokenItem token = NextToken();
+                ASTNode right = ParseComparison();
+                left = new ASTBinary(token, left, right);
+            }
+
             return left;
         }
         private ASTNode ParseAddition()
@@ -307,7 +404,7 @@ namespace PHP.Core.Lang
         private ASTNode ParseMultiplication()
         {
             ASTNode left = ParsePow();
-            while (IsMatch(TokenType.T_MUL, TokenType.T_DIV))
+            while (IsMatch(TokenType.T_MUL, TokenType.T_DIV, TokenType.T_MOD))
             {
                 TokenItem token = NextToken();
                 ASTNode right = ParsePow();
@@ -372,7 +469,7 @@ namespace PHP.Core.Lang
             return new ASTData(NextToken(
                 TokenType.T_LNUMBER,
                 TokenType.T_DNUMBER, 
-                TokenType.T_CONSTANT_ENCAPSED_STRING, 
+                TokenType.T_STRING, 
                 TokenType.T_VARIABLE,
                 TokenType.T_STATIC_STRING));
         }

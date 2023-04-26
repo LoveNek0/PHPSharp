@@ -15,4 +15,7 @@ public class ASTForeach : ASTBlock
     internal ASTForeach(TokenItem token) : base(token)
     {
     }
+
+    public override string ToString() =>
+        $"foreach({_container} as {(_key == null ? "" : _key + " => ")}{_value}{base.ToString()}";
 }

@@ -11,4 +11,6 @@ public class ASTDoWhile : ASTBlock
     internal ASTDoWhile(TokenItem token) : base(token)
     {
     }
+
+    public override string ToString() => $"do{base.ToString()}while({_condition})";
 }

@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace PHP.Core.Lang
 {
-    public class Lexer
+    public class Tokenizer
     {
         public readonly string Code;
 
         private List<TokenItem> tokens = new List<TokenItem>();
         private int index = 0;
 
-        public Lexer(string code)
+        public Tokenizer(string code)
         {
             this.Code = code;
         }

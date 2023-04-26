@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="antlr4\" />
+      <Folder Include="test\" />
     </ItemGroup>
 
 </Project>

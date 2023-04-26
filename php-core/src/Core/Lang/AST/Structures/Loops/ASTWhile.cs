@@ -9,4 +9,6 @@ public class ASTWhile : ASTBlock
     internal ASTWhile(TokenItem token) : base(token)
     {
     }
+
+    public override string ToString() => $"while({_condition}){base.ToString()}";
 }

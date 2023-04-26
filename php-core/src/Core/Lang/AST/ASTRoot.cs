@@ -16,6 +16,6 @@ namespace PHP.Core.Lang.AST
         {
         }
         
-        public override string ToString() => String.Join(";\n ", _children);
+        public override string ToString() => String.Join("\n", _children);
     }
 }
