@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using PHP.Core.Lang.AST.Operators;
 using PHP.Core.Lang.AST.Structures;
 using PHP.Core.Lang.AST.Structures.Function;
+using PHP.Core.Lang.AST.Structures.Loops;
 
 namespace PHP.Core.Lang
 {
@@ -88,10 +89,15 @@ namespace PHP.Core.Lang
             }
             if (IsMatch(TokenType.T_IF))
                 return ParseIf();
+            
+            //  Loops
             if (IsMatch(TokenType.T_WHILE))
                 return ParseWhile();
             if (IsMatch(TokenType.T_DO))
                 return ParseDoWhile();
+            if (IsMatch(TokenType.T_FOR))
+                return ParseFor();
+            
             if (IsMatch(TokenType.T_FUNCTION))
                 return ParseFunction();
             if (IsMatch(TokenType.T_VARIABLE, TokenType.T_STATIC_STRING))
@@ -108,7 +114,7 @@ namespace PHP.Core.Lang
         {
             ASTIf node = new ASTIf(NextToken(TokenType.T_IF));
             NextToken(TokenType.T_BRACE_OPEN);
-            node._expression = ParseExpression();
+            node._condition = ParseExpression();
             NextToken(TokenType.T_BRACE_CLOSE);
             if (IsMatch(TokenType.T_CURLY_BRACE_OPEN))
             {
@@ -134,11 +140,13 @@ namespace PHP.Core.Lang
             }
             return node;
         }
+        
+        //  Loops
         private ASTNode ParseWhile()
         {
             ASTWhile node = new ASTWhile(NextToken(TokenType.T_WHILE));
             NextToken(TokenType.T_BRACE_OPEN);
-            node._expression = ParseExpression();
+            node._condition = ParseExpression();
             NextToken(TokenType.T_BRACE_CLOSE);
             if (IsMatch(TokenType.T_CURLY_BRACE_OPEN))
             {
@@ -166,10 +174,57 @@ namespace PHP.Core.Lang
                 node._lines.Add(ParseLine());
             NextToken(TokenType.T_WHILE);
             NextToken(TokenType.T_BRACE_OPEN);
-            node._expression = ParseExpression();
+            node._condition = ParseExpression();
             NextToken(TokenType.T_BRACE_CLOSE);
+            NextToken(TokenType.T_SEMICOLON);
             return node;
         }
+        private ASTNode ParseFor()
+        {
+            ASTFor node = new ASTFor(NextToken(TokenType.T_FOR));
+            NextToken(TokenType.T_BRACE_OPEN);
+            if(!IsMatch(TokenType.T_SEMICOLON))
+                node._initialAction = ParseExpression();
+            NextToken(TokenType.T_SEMICOLON);
+            if(!IsMatch(TokenType.T_SEMICOLON))
+                node._condition = ParseExpression();
+            NextToken(TokenType.T_SEMICOLON);
+            if(!IsMatch(TokenType.T_BRACE_CLOSE))
+                node._postAction = ParseExpression();
+            NextToken(TokenType.T_BRACE_CLOSE);
+            if (IsMatch(TokenType.T_CURLY_BRACE_OPEN))
+            {
+                NextToken(TokenType.T_CURLY_BRACE_OPEN);
+                while (!IsMatch(TokenType.T_CURLY_BRACE_CLOSE))
+                    node._lines.Add(ParseLine());
+                NextToken(TokenType.T_CURLY_BRACE_CLOSE);
+            }
+            else
+                node._lines.Add(ParseLine());
+            return node;
+        }
+        private ASTNode ParseForeach()
+        {
+            ASTForeach node = new ASTForeach(NextToken(TokenType.T_FOREACH));
+            NextToken(TokenType.T_BRACE_OPEN);
+            node._container = ParseExpression();
+            NextToken(TokenType.T_AS);
+            node._key = ParseObjectOperator();
+            NextToken(TokenType.T_DOUBLE_ARROW);
+            node._value = ParseObjectOperator();
+            NextToken(TokenType.T_BRACE_CLOSE);
+            if (IsMatch(TokenType.T_CURLY_BRACE_OPEN))
+            {
+                NextToken(TokenType.T_CURLY_BRACE_OPEN);
+                while (!IsMatch(TokenType.T_CURLY_BRACE_CLOSE))
+                    node._lines.Add(ParseLine());
+                NextToken(TokenType.T_CURLY_BRACE_CLOSE);
+            }
+            else
+                node._lines.Add(ParseLine());
+            return node;
+        }
+        
         private ASTNode ParseFunction()
         {
             ASTFunction node = new ASTFunction(NextToken(TokenType.T_FUNCTION));
@@ -213,14 +268,15 @@ namespace PHP.Core.Lang
             NextToken(TokenType.T_CURLY_BRACE_CLOSE);
             return node;
         }
-
+    
+        //  Expression
         private ASTNode ParseExpression()
         {
             return ParseAssignment();
         }
         private ASTNode ParseAssignment()
         {
-            ASTNode left = ParseAddition();
+            var left = IsMatch(TokenType.T_VARIABLE, TokenType.T_STATIC_STRING) ? ParseObjectOperator() : ParseAddition();
             if (IsMatch(
                     TokenType.T_ASSIGNMENT,
                     TokenType.T_ADD_ASSIGNMENT,
