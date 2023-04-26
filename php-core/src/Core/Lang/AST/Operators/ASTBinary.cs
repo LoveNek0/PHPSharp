@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Lang.AST
+namespace PHP.Core.Lang.AST.Operators   
 {
     public class ASTBinary : ASTNode
     {

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PHP.Core.Lang;
+using PHP.Core.Lang.AST;
+using PHP.Core.Lang.Tokens;
 using PHP.Runtime.Memory;
 using PHP.Runtime.Memory.Data;
 
@@ -14,15 +16,14 @@ namespace PHP.Runtime
     {
         public static void Main(string[] args)
         {
-            Lexer lexer = new Lexer(File.ReadAllText(@"D:\Projects\CSharp\PHPSharp\php-core\test\e1.php"));
-            //foreach (var i in lexer.Tokenize())
-              //  Console.WriteLine(i);
-            Parser parser = new Parser(lexer.Tokenize());
-            foreach (var i in parser.RPN())
-                Console.Write(i.Data + " ");
+            string code = File.ReadAllText(@"D:\Projects\CSharp\PHPSharp\php-core\test\e1.php");
+            Lexer lexer = new Lexer(code);
+            TokenItem[] tokens = lexer.Tokenize();
+            Parser parser = new Parser(tokens);
+            ASTRoot root = parser.Parse();
+            Console.WriteLine(root);
             Console.WriteLine();
             Console.WriteLine("End.");
-            Console.ReadKey();
         }
     }
 }

@@ -9,8 +9,8 @@ namespace PHP.Core.Lang.Exceptions
 {
     public class SyntaxException : Exception
     {
-        public readonly TokenPosition Position;
-        public SyntaxException(string message, TokenPosition position) :
-            base($"Syntax exception: {message} at line {position.Line + 1}, column {position.Column + 1}") => Position = position;
+        public readonly TokenItem Token;
+        public SyntaxException(string message, TokenItem token) :
+            base($"Syntax exception: {message} at line {token.Position.Line + 1}, column {token.Position.Column + 1}") => Token = token;
     }
 }

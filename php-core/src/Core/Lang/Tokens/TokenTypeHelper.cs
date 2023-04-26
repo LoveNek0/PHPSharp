@@ -13,6 +13,9 @@ namespace PHP.Core.Lang.Tokens
         {
             { TokenType.T_COMMENT,                  @"((\/\/(.|\w)*)|((\/\*)[\w\W\s\S]*(\*\/)))" },
 
+            { TokenType.T_IF,                       @"[Ii][Ff]" },
+            { TokenType.T_ELSE,                     @"[Ee][Ll][Ss][Ee]" },
+            // { TokenType.T_ELSEIF,                   @"[Ee][Ll][Ss][Ee][Ii][Ff]" },
             { TokenType.T_WHILE,                    @"[Ww][Hh][Ii][Ll][Ee]" },
             { TokenType.T_FOR,                      @"[Ff][Oo][Rr]" },
             { TokenType.T_FOREACH,                  @"[Ff][Oo][Rr][Ee][Aa][Cc][Hh]" },
@@ -62,9 +65,10 @@ namespace PHP.Core.Lang.Tokens
             { TokenType.T_DNUMBER,                  @"([0-9]+)[.]([0-9]+)" },
             { TokenType.T_LNUMBER,                  @"[0-9]+" },
             { TokenType.T_VARIABLE,                 @"([$]+([a-zA-Z_][a-zA-Z0-9_]*))" },
-            { TokenType.T_STRING,                   @"[a-zA-Z_][a-zA-Z0-9_]*" },
+            { TokenType.T_STATIC_STRING,                   @"[a-zA-Z_][a-zA-Z0-9_]*" },
 
             { TokenType.T_QUERY,                    @"[?]" },
+            { TokenType.T_DOUBLE_COLON,             @"[:][:]" },
             { TokenType.T_COLON,                    @"[:]" },
             { TokenType.T_ELLIPSIS,                 @"[.][.][.]" },
             { TokenType.T_COMMA,                    @"[,]" },

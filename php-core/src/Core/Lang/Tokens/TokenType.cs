@@ -83,7 +83,7 @@ namespace PHP.Core.Lang.Tokens
         T_LNUMBER,                  //  123 012 0x1ac
         T_DNUMBER,                  //  1.5
         T_CONSTANT_ENCAPSED_STRING, //  "" ''
-        T_STRING,                   //  parent self T_CONSTANT_ENCAPSED_STRING
+        T_STATIC_STRING,                   //  parent self T_CONSTANT_ENCAPSED_STRING
 
         //  Variable
         T_VARIABLE,                 //  $var_1
@@ -155,7 +155,7 @@ namespace PHP.Core.Lang.Tokens
         //  if ... else
         T_IF,                       //  if
         T_ELSE,                     //  else
-        T_ELSEIF,                   //  elseif
+        // T_ELSEIF,                   //  elseif
         T_ENDIF,                    //  endif
 
         //  try .. catch

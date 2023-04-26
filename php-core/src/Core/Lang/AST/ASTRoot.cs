@@ -15,5 +15,7 @@ namespace PHP.Core.Lang.AST
         internal ASTRoot()
         {
         }
+        
+        public override string ToString() => String.Join(";\n ", _children);
     }
 }

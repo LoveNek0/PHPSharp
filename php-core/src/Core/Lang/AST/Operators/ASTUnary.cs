@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PHP.Core.Lang.AST
+namespace PHP.Core.Lang.AST.Operators
 {
     public class ASTUnary : ASTNode
     {
@@ -22,6 +22,6 @@ namespace PHP.Core.Lang.AST
             Side = side;
         }
 
-        public override string ToString() => $"({(Side == OperatorSide.Left ? Token.Data : "")}{Operand.Token}{(Side == OperatorSide.Right ? Token.Data : "")})";
+        public override string ToString() => $"({(Side == OperatorSide.Left ? Token.Data : "")}{Operand.Token.Data}{(Side == OperatorSide.Right ? Token.Data : "")})";
     }
 }
