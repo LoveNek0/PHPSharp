@@ -1,3 +1,6 @@
 [submodule "packages/php-core"]
 	path = packages/php-core
 	url = git@github.com:LoveNek0/php-core.git
+[submodule "packages/php-runtime"]
+	path = packages/php-runtime
+	url = git@github.com:LoveNek0/php-runtime.git
