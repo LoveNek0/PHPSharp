@@ -4,3 +4,6 @@
 [submodule "packages/php-runtime"]
 	path = packages/php-runtime
 	url = git@github.com:LoveNek0/php-runtime.git
+[submodule "package-manager"]
+	path = package-manager
+	url = git@github.com:LoveNek0/phpsharp-package-manager.git
